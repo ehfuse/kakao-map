@@ -210,17 +210,17 @@ const { map, state, searchAddress, createMarker } = useKakaoMap<MyMapState>({
 
 #### 좌표 관련
 
-| Method          | 시그니처                                                                      | 설명                   |
-| --------------- | ----------------------------------------------------------------------------- | ---------------------- |
-| `parsePosition` | `(position: `[`KakaoPosition`](#kakaoposition)`) => KakaoLatLngInstance \| null` | 좌표 변환              |
-| `getDistance`   | `(pos1: `[`KakaoPosition`](#kakaoposition)`, pos2: `[`KakaoPosition`](#kakaoposition)`) => number`     | 두 지점 간 거리 (미터) |
+| Method          | 시그니처                                                                                           | 설명                   |
+| --------------- | -------------------------------------------------------------------------------------------------- | ---------------------- |
+| `parsePosition` | `(position: `[`KakaoPosition`](#kakaoposition)`) => KakaoLatLngInstance \| null`                   | 좌표 변환              |
+| `getDistance`   | `(pos1: `[`KakaoPosition`](#kakaoposition)`, pos2: `[`KakaoPosition`](#kakaoposition)`) => number` | 두 지점 간 거리 (미터) |
 
 #### 검색 함수
 
-| Method          | 시그니처                                                                        | 설명               |
-| --------------- | ------------------------------------------------------------------------------- | ------------------ |
-| `searchAddress` | `(address: string) => Promise<KakaoSearchResult>`                               | 주소 → 좌표 검색   |
-| `searchPlace`   | `(keyword: string) => Promise<KakaoPlaceResult[]>`                              | 키워드로 장소 검색 |
+| Method          | 시그니처                                                                                              | 설명               |
+| --------------- | ----------------------------------------------------------------------------------------------------- | ------------------ |
+| `searchAddress` | `(address: string) => Promise<KakaoSearchResult>`                                                     | 주소 → 좌표 검색   |
+| `searchPlace`   | `(keyword: string) => Promise<KakaoPlaceResult[]>`                                                    | 키워드로 장소 검색 |
 | `coord2Address` | `(position: `[`KakaoPosition`](#kakaoposition)`) => Promise<{address: string, roadAddress?: string}>` | 좌표 → 주소 변환   |
 
 ```tsx
@@ -239,8 +239,8 @@ const address = await coord2Address({ lat: 37.5665, lng: 126.978 });
 
 #### 마커 생성
 
-| Method         | 시그니처                                                                    | 설명      |
-| -------------- | --------------------------------------------------------------------------- | --------- |
+| Method         | 시그니처                                                                                          | 설명      |
+| -------------- | ------------------------------------------------------------------------------------------------- | --------- |
 | `createMarker` | `(position: `[`KakaoPosition`](#kakaoposition)`, options?: MarkerOptions) => KakaoMarker \| null` | 마커 생성 |
 
 ```tsx
@@ -339,10 +339,10 @@ const selectedPlace = state.useValue("selectedPlace");
 const markers = state.useValue("markers");
 
 // 값 쓰기
-state.setValue("selectedPlace", { 
-    lat: 37.4979, 
+state.setValue("selectedPlace", {
+    lat: 37.4979,
     lng: 127.0276,
-    name: "강남역" 
+    name: "강남역",
 });
 state.setValue("markers", [...markers, newMarker]);
 

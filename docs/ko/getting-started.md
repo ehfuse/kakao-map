@@ -17,9 +17,9 @@ pnpm add @ehfuse/kakao-map
 3. "플랫폼" → "Web" 추가
 4. "JavaScript 키" 복사
 
-## 기본 사용법
+## API 키 설정
 
-### 1. HTML에 스크립트 추가 (권장)
+### 방법 1: HTML에 스크립트 추가 (권장)
 
 `index.html` 파일에 Kakao Maps SDK를 추가합니다:
 
@@ -42,7 +42,37 @@ pnpm add @ehfuse/kakao-map
 </html>
 ```
 
-### 2. 간단한 지도 표시
+### 방법 2: 동적 API 키 설정 (선택사항)
+
+HTML에 스크립트를 추가하지 않고 동적으로 API 키를 설정할 수도 있습니다:
+
+```tsx
+import { Map } from "@ehfuse/kakao-map";
+
+function App() {
+    return (
+        <Map
+            apiKey="YOUR_APP_KEY"
+            center={{ lat: 37.5665, lng: 126.978 }}
+            level={3}
+            style={{ width: "100%", height: "400px" }}
+        />
+    );
+}
+```
+
+> ⚠️ **프로덕션 환경에서는 방법 1을 권장합니다.**  
+> Kakao Maps SDK는 `document.write()`를 사용하므로 동기 로딩이 필요합니다. HTML에서 직접 로드하면:
+>
+> -   React 앱 시작 전에 SDK가 준비됩니다
+> -   로딩 상태 관리가 필요 없습니다
+> -   더 안정적이고 빠른 초기 로딩이 가능합니다
+
+---
+
+## 기본 사용법
+
+### 1. 간단한 지도 표시
 
 ```tsx
 import { Map } from "@ehfuse/kakao-map";
@@ -60,7 +90,7 @@ function App() {
 export default App;
 ```
 
-### 3. 마커 추가
+### 2. 마커 추가
 
 ```tsx
 import { Map, MapMarker } from "@ehfuse/kakao-map";
@@ -80,27 +110,6 @@ function App() {
     );
 }
 ```
-
-## 동적 API 키 설정 (선택사항)
-
-HTML에 스크립트를 추가하지 않고 동적으로 API 키를 설정할 수도 있습니다:
-
-```tsx
-import { Map } from "@ehfuse/kakao-map";
-
-function App() {
-    return (
-        <Map
-            apiKey="YOUR_APP_KEY"
-            center={{ lat: 37.5665, lng: 126.978 }}
-            level={3}
-            style={{ width: "100%", height: "400px" }}
-        />
-    );
-}
-```
-
-> ⚠️ 프로덕션 환경에서는 HTML에 스크립트를 추가하는 방식을 권장합니다.
 
 ## useKakaoMap 훅 사용
 
