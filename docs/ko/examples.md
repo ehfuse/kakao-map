@@ -409,8 +409,21 @@ function CustomSVGMarker() {
 import { Map, MapMarker, useKakaoMap } from "@ehfuse/kakao-map";
 import { useState } from "react";
 
+// 주소 검색 상태 타입 정의
+interface AddressSearchState {
+    center: { lat: number; lng: number };
+    level: number;
+    markerPosition: { lat: number; lng: number } | null;
+    searchResult: {
+        address: string;
+        roadAddress?: string;
+        lat: number;
+        lng: number;
+    } | null;
+}
+
 function AddressSearchExample() {
-    const { searchAddress, state } = useKakaoMap({
+    const { searchAddress, state } = useKakaoMap<AddressSearchState>({
         stateId: "address-search",
         initialValues: {
             center: { lat: 37.5665, lng: 126.978 },

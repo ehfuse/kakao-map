@@ -109,22 +109,31 @@ function App() {
 ```tsx
 import { Map, MapMarker, useKakaoMap } from "@ehfuse/kakao-map";
 
+// 비즈니스 로직 상태 타입 정의
+interface MyMapState {
+    selectedPlace: { lat: number; lng: number; name: string } | null;
+    searchKeyword: string;
+}
+
 function App() {
-    const { map, state, searchAddress } = useKakaoMap({
+    const { map, state, searchAddress } = useKakaoMap<MyMapState>({
         stateId: "my-map",
         initialValues: {
-            center: { lat: 37.5665, lng: 126.978 },
-            level: 3,
+            selectedPlace: null,
+            searchKeyword: "",
         },
     });
 
-    const center = state.useValue("center");
-    const level = state.useValue("level");
+    const selectedPlace = state.useValue("selectedPlace");
 
     const handleSearch = async () => {
         const result = await searchAddress("서울시청");
         if (result) {
-            state.setValue("center", { lat: result.lat, lng: result.lng });
+            state.setValue("selectedPlace", {
+                lat: result.lat,
+                lng: result.lng,
+                name: "서울시청",
+            });
         }
     };
 
@@ -132,11 +141,23 @@ function App() {
         <div>
             <button onClick={handleSearch}>서울시청 찾기</button>
             <Map
-                center={center}
-                level={level}
+                center={
+                    selectedPlace
+                        ? { lat: selectedPlace.lat, lng: selectedPlace.lng }
+                        : { lat: 37.5665, lng: 126.978 }
+                }
+                level={3}
                 style={{ width: "100%", height: "400px" }}
             >
-                <MapMarker position={center} />
+                {selectedPlace && (
+                    <MapMarker
+                        position={{
+                            lat: selectedPlace.lat,
+                            lng: selectedPlace.lng,
+                        }}
+                        title={selectedPlace.name}
+                    />
+                )}
             </Map>
         </div>
     );

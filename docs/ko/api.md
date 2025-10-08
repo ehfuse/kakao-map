@@ -18,23 +18,23 @@ import { Map } from "@ehfuse/kakao-map";
 
 #### Props
 
-| Prop                     | 타입                   | 기본값       | 설명                       |
-| ------------------------ | ---------------------- | ------------ | -------------------------- |
-| `center`                 | `KakaoPosition`        | 필수         | 지도 중심 좌표             |
-| `level`                  | `number`               | `3`          | 지도 확대 레벨 (1~14)      |
-| `style`                  | `CSSProperties`        | -            | 지도 컨테이너 스타일       |
-| `className`              | `string`               | -            | CSS 클래스명               |
-| `apiKey`                 | `string`               | -            | Kakao API 키 (동적 로드시) |
-| `draggable`              | `boolean`              | `true`       | 드래그 가능 여부           |
-| `zoomable`               | `boolean`              | `true`       | 확대/축소 가능 여부        |
-| `wheelZoom`              | `boolean`              | `true`       | 마우스 휠 줌 가능 여부     |
-| `zoomControl`            | `boolean`              | `false`      | 줌 컨트롤 표시 여부        |
-| `zoomControlPosition`    | `KakaoControlPosition` | `'RIGHT'`    | 줌 컨트롤 위치             |
-| `mapTypeControl`         | `boolean`              | `false`      | 지도 타입 컨트롤 표시 여부 |
-| `mapTypeControlPosition` | `KakaoControlPosition` | `'TOPRIGHT'` | 지도 타입 컨트롤 위치      |
-| `traffic`                | `boolean`              | `false`      | 교통정보 표시 여부         |
-| `terrain`                | `boolean`              | `false`      | 지형정보 표시 여부         |
-| `clusterer`              | `boolean`              | `false`      | 마커 클러스터링 활성화     |
+| Prop                     | 타입                                            | 기본값       | 설명                       |
+| ------------------------ | ----------------------------------------------- | ------------ | -------------------------- |
+| `center`                 | [`KakaoPosition`](#kakaoposition)               | 필수         | 지도 중심 좌표             |
+| `level`                  | `number`                                        | `3`          | 지도 확대 레벨 (1~14)      |
+| `style`                  | `CSSProperties`                                 | -            | 지도 컨테이너 스타일       |
+| `className`              | `string`                                        | -            | CSS 클래스명               |
+| `apiKey`                 | `string`                                        | -            | Kakao API 키 (동적 로드시) |
+| `draggable`              | `boolean`                                       | `true`       | 드래그 가능 여부           |
+| `zoomable`               | `boolean`                                       | `true`       | 확대/축소 가능 여부        |
+| `wheelZoom`              | `boolean`                                       | `true`       | 마우스 휠 줌 가능 여부     |
+| `zoomControl`            | `boolean`                                       | `false`      | 줌 컨트롤 표시 여부        |
+| `zoomControlPosition`    | [`KakaoControlPosition`](#kakaocontrolposition) | `'RIGHT'`    | 줌 컨트롤 위치             |
+| `mapTypeControl`         | `boolean`                                       | `false`      | 지도 타입 컨트롤 표시 여부 |
+| `mapTypeControlPosition` | [`KakaoControlPosition`](#kakaocontrolposition) | `'TOPRIGHT'` | 지도 타입 컨트롤 위치      |
+| `traffic`                | `boolean`                                       | `false`      | 교통정보 표시 여부         |
+| `terrain`                | `boolean`                                       | `false`      | 지형정보 표시 여부         |
+| `clusterer`              | `boolean`                                       | `false`      | 마커 클러스터링 활성화     |
 
 #### 이벤트
 
@@ -62,16 +62,16 @@ import { MapMarker } from "@ehfuse/kakao-map";
 
 #### Props
 
-| Prop        | 타입            | 기본값  | 설명                                             |
-| ----------- | --------------- | ------- | ------------------------------------------------ |
-| `position`  | `KakaoPosition` | 필수    | 마커 위치                                        |
-| `title`     | `string`        | -       | 마커 타이틀 (호버시 표시)                        |
-| `clickable` | `boolean`       | `false` | 클릭 가능 여부 (onClick 있으면 자동 true)        |
-| `draggable` | `boolean`       | `false` | 드래그 가능 여부                                 |
-| `zIndex`    | `number`        | -       | z-index 값                                       |
-| `opacity`   | `number`        | `1`     | 투명도 (0~1)                                     |
-| `visible`   | `boolean`       | `true`  | 표시 여부                                        |
-| `clustered` | `boolean`       | `auto`  | 클러스터 포함 여부 (Map의 clusterer 설정에 따름) |
+| Prop        | 타입                              | 기본값  | 설명                                             |
+| ----------- | --------------------------------- | ------- | ------------------------------------------------ |
+| `position`  | [`KakaoPosition`](#kakaoposition) | 필수    | 마커 위치                                        |
+| `title`     | `string`                          | -       | 마커 타이틀 (호버시 표시)                        |
+| `clickable` | `boolean`                         | `false` | 클릭 가능 여부 (onClick 있으면 자동 true)        |
+| `draggable` | `boolean`                         | `false` | 드래그 가능 여부                                 |
+| `zIndex`    | `number`                          | -       | z-index 값                                       |
+| `opacity`   | `number`                          | `1`     | 투명도 (0~1)                                     |
+| `visible`   | `boolean`                         | `true`  | 표시 여부                                        |
+| `clustered` | `boolean`                         | `auto`  | 클러스터 포함 여부 (Map의 clusterer 설정에 따름) |
 
 #### 커스텀 이미지
 
@@ -129,12 +129,12 @@ import { InfoWindow } from "@ehfuse/kakao-map";
 
 #### Props
 
-| Prop        | 타입                  | 기본값  | 설명                                  |
-| ----------- | --------------------- | ------- | ------------------------------------- |
-| `position`  | `KakaoPosition`       | -       | 정보창 위치 (마커 자식이면 생략 가능) |
-| `content`   | `ReactNode \| string` | -       | 정보창 내용                           |
-| `removable` | `boolean`             | `false` | 닫기 버튼 표시 여부                   |
-| `zIndex`    | `number`              | -       | z-index 값                            |
+| Prop        | 타입                              | 기본값  | 설명                                  |
+| ----------- | --------------------------------- | ------- | ------------------------------------- |
+| `position`  | [`KakaoPosition`](#kakaoposition) | -       | 정보창 위치 (마커 자식이면 생략 가능) |
+| `content`   | `ReactNode \| string`             | -       | 정보창 내용                           |
+| `removable` | `boolean`                         | `false` | 닫기 버튼 표시 여부                   |
+| `zIndex`    | `number`                          | -       | z-index 값                            |
 
 #### 이벤트
 
@@ -158,14 +158,14 @@ import { CustomOverlayMap } from "@ehfuse/kakao-map";
 
 #### Props
 
-| Prop       | 타입                  | 기본값 | 설명              |
-| ---------- | --------------------- | ------ | ----------------- |
-| `position` | `KakaoPosition`       | 필수   | 오버레이 위치     |
-| `content`  | `ReactNode \| string` | -      | 오버레이 내용     |
-| `xAnchor`  | `number`              | `0.5`  | 가로 기준점 (0~1) |
-| `yAnchor`  | `number`              | `0.5`  | 세로 기준점 (0~1) |
-| `zIndex`   | `number`              | -      | z-index 값        |
-| `visible`  | `boolean`             | `true` | 표시 여부         |
+| Prop       | 타입                              | 기본값 | 설명              |
+| ---------- | --------------------------------- | ------ | ----------------- |
+| `position` | [`KakaoPosition`](#kakaoposition) | 필수   | 오버레이 위치     |
+| `content`  | `ReactNode \| string`             | -      | 오버레이 내용     |
+| `xAnchor`  | `number`                          | `0.5`  | 가로 기준점 (0~1) |
+| `yAnchor`  | `number`                          | `0.5`  | 세로 기준점 (0~1) |
+| `zIndex`   | `number`                          | -      | z-index 값        |
+| `visible`  | `boolean`                         | `true` | 표시 여부         |
 
 ---
 
@@ -178,21 +178,27 @@ Kakao Maps의 모든 기능을 제공하는 All-in-One 훅입니다.
 ```tsx
 import { useKakaoMap } from "@ehfuse/kakao-map";
 
-const { map, state, searchAddress, createMarker } = useKakaoMap({
+// 비즈니스 로직 상태 타입 정의
+interface MyMapState {
+    selectedPlace: { lat: number; lng: number; name: string } | null;
+    searchResults: any[];
+}
+
+const { map, state, searchAddress, createMarker } = useKakaoMap<MyMapState>({
     stateId: "my-map",
     initialValues: {
-        center: { lat: 37.5665, lng: 126.978 },
-        level: 3,
+        selectedPlace: null,
+        searchResults: [],
     },
 });
 ```
 
 #### Options
 
-| Option          | 타입         | 설명                               |
-| --------------- | ------------ | ---------------------------------- |
-| `stateId`       | `string`     | 상태 관리 ID (같은 ID는 상태 공유) |
-| `initialValues` | `Partial<T>` | 초기 상태 값                       |
+| Option          | 타입         | 설명                                            |
+| --------------- | ------------ | ----------------------------------------------- |
+| `stateId`       | `string`     | 상태 관리 ID (같은 ID는 상태 공유)              |
+| `initialValues` | `Partial<T>` | 초기 상태 값 (비즈니스 로직 상태, 맵 옵션 아님) |
 
 #### 반환값
 
@@ -204,10 +210,10 @@ const { map, state, searchAddress, createMarker } = useKakaoMap({
 
 #### 좌표 관련
 
-| Method          | 시그니처                                                   | 설명                   |
-| --------------- | ---------------------------------------------------------- | ---------------------- |
-| `parsePosition` | `(position: KakaoPosition) => KakaoLatLngInstance \| null` | 좌표 변환              |
-| `getDistance`   | `(pos1: KakaoPosition, pos2: KakaoPosition) => number`     | 두 지점 간 거리 (미터) |
+| Method          | 시그니처                                                                      | 설명                   |
+| --------------- | ----------------------------------------------------------------------------- | ---------------------- |
+| `parsePosition` | `(position: `[`KakaoPosition`](#kakaoposition)`) => KakaoLatLngInstance \| null` | 좌표 변환              |
+| `getDistance`   | `(pos1: `[`KakaoPosition`](#kakaoposition)`, pos2: `[`KakaoPosition`](#kakaoposition)`) => number`     | 두 지점 간 거리 (미터) |
 
 #### 검색 함수
 
@@ -215,7 +221,7 @@ const { map, state, searchAddress, createMarker } = useKakaoMap({
 | --------------- | ------------------------------------------------------------------------------- | ------------------ |
 | `searchAddress` | `(address: string) => Promise<KakaoSearchResult>`                               | 주소 → 좌표 검색   |
 | `searchPlace`   | `(keyword: string) => Promise<KakaoPlaceResult[]>`                              | 키워드로 장소 검색 |
-| `coord2Address` | `(position: KakaoPosition) => Promise<{address: string, roadAddress?: string}>` | 좌표 → 주소 변환   |
+| `coord2Address` | `(position: `[`KakaoPosition`](#kakaoposition)`) => Promise<{address: string, roadAddress?: string}>` | 좌표 → 주소 변환   |
 
 ```tsx
 // 주소 검색
@@ -235,7 +241,7 @@ const address = await coord2Address({ lat: 37.5665, lng: 126.978 });
 
 | Method         | 시그니처                                                                    | 설명      |
 | -------------- | --------------------------------------------------------------------------- | --------- |
-| `createMarker` | `(position: KakaoPosition, options?: MarkerOptions) => KakaoMarker \| null` | 마커 생성 |
+| `createMarker` | `(position: `[`KakaoPosition`](#kakaoposition)`, options?: MarkerOptions) => KakaoMarker \| null` | 마커 생성 |
 
 ```tsx
 const marker = createMarker(
@@ -302,29 +308,43 @@ interface MapState {
 }
 ```
 
+> **참고**: [`KakaoLatLng`](#kakaoposition)는 `{ lat: number; lng: number }` 형태입니다.  
+> [`KakaoControlPosition`](#kakaocontrolposition)은 컨트롤 위치를 나타내는 문자열 타입입니다.
+
 ---
 
 ## 상태 관리 (forma)
 
-`useKakaoMap`은 [@ehfuse/forma](https://github.com/ehfuse/forma)를 사용하여 상태를 관리합니다.
+`useKakaoMap`은 [@ehfuse/forma](https://github.com/ehfuse/forma)를 사용하여 비즈니스 로직 상태를 관리합니다.
+
+> ⚠️ **주의**: `initialValues`는 **비즈니스 로직 상태**를 위한 것입니다. 맵 옵션(`center`, `level` 등)은 `Map` 컴포넌트의 props로 전달하세요.
 
 ```tsx
-const { state } = useKakaoMap({
+// 비즈니스 로직 상태 타입 정의
+interface MyMapState {
+    selectedPlace: { lat: number; lng: number; name: string } | null;
+    markers: Array<{ id: string; position: { lat: number; lng: number } }>;
+}
+
+const { state } = useKakaoMap<MyMapState>({
     stateId: "my-map",
     initialValues: {
-        center: { lat: 37.5665, lng: 126.978 },
-        level: 3,
-        selectedMarker: null,
+        selectedPlace: null,
+        markers: [],
     },
 });
 
 // 값 읽기 (반응형 - 변경시 리렌더링)
-const center = state.useValue("center");
-const level = state.useValue("level");
+const selectedPlace = state.useValue("selectedPlace");
+const markers = state.useValue("markers");
 
 // 값 쓰기
-state.setValue("center", { lat: 37.4979, lng: 127.0276 });
-state.setValue("level", 5);
+state.setValue("selectedPlace", { 
+    lat: 37.4979, 
+    lng: 127.0276,
+    name: "강남역" 
+});
+state.setValue("markers", [...markers, newMarker]);
 
 // 여러 값 동시 변경
 state.setValues({
