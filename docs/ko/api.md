@@ -16,6 +16,8 @@ import { Map } from "@ehfuse/kakao-map";
 />;
 ```
 
+> 📖 **예제**: [기본 지도](./examples.md#기본-예제), [지도 컨트롤](./examples.md#지도-컨트롤)
+
 #### Props
 
 | Prop                     | 타입                                            | 기본값       | 설명                       |
@@ -59,6 +61,8 @@ import { MapMarker } from "@ehfuse/kakao-map";
 
 <MapMarker position={{ lat: 37.5665, lng: 126.978 }} title="서울시청" />;
 ```
+
+> 📖 **예제**: [마커 표시](./examples.md#기본-예제), [마커 클러스터링](./examples.md#마커-클러스터링), [인터랙티브 마커](./examples.md#인터랙티브-마커), [커스텀 마커 이미지](./examples.md#커스텀-마커-이미지)
 
 #### Props
 
@@ -127,6 +131,8 @@ import { InfoWindow } from "@ehfuse/kakao-map";
 </MapMarker>;
 ```
 
+> 📖 **예제**: [InfoWindow (정보창)](./examples.md#infowindow-정보창)
+
 #### Props
 
 | Prop        | 타입                              | 기본값  | 설명                                  |
@@ -155,6 +161,8 @@ import { CustomOverlayMap } from "@ehfuse/kakao-map";
     <div style={{ padding: "10px", background: "white" }}>커스텀 오버레이</div>
 </CustomOverlayMap>;
 ```
+
+> 📖 **예제**: [CustomOverlay](./examples.md#customoverlay)
 
 #### Props
 
@@ -192,6 +200,8 @@ const { map, state, searchAddress, createMarker } = useKakaoMap<MyMapState>({
     },
 });
 ```
+
+> 📖 **예제**: [주소 검색](./examples.md#주소-검색), [상태 관리와 통합](./examples.md#상태-관리와-통합)
 
 #### Options
 
@@ -365,3 +375,11 @@ const { state } = useKakaoMap({ stateId: "shared-map" });
 const { state } = useKakaoMap({ stateId: "shared-map" });
 // ↑ 같은 stateId → 같은 상태 공유
 ```
+
+---
+
+## 더 알아보기
+
+-   [시작하기](./getting-started.md) - 설치 및 기본 사용법
+-   [예제 모음](./examples.md) - 다양한 사용 사례와 코드 예제
+-   [GitHub 저장소](https://github.com/ehfuse/kakao-map) - 소스 코드 및 전체 예제
