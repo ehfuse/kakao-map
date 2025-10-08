@@ -1,0 +1,9 @@
+# TypeScript build outputs
+dist/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# Example project dependencies
+!example/node_modules/

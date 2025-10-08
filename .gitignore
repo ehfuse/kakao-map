@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Example project dependencies
+!example/node_modules/
+
+# Build outputs
+dist/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

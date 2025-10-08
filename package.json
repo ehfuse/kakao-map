@@ -1,0 +1,45 @@
+{
+    "name": "@ehfuse/kakao-map",
+    "version": "1.0.0",
+    "description": "React components for Kakao Maps",
+    "main": "dist/index.js",
+    "module": "dist/index.esm.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "src"
+    ],
+    "scripts": {
+        "build": "tsc && tsc --module esnext --outDir dist/esm",
+        "prepublishOnly": "npm run build"
+    },
+    "keywords": [
+        "kakao",
+        "kakao-map",
+        "kakao-maps",
+        "react",
+        "react-component",
+        "map",
+        "typescript"
+    ],
+    "author": "KIM YOUNG JIN <ehfuse@gmail.com>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ehfuse/kakao-map.git"
+    },
+    "peerDependencies": {
+        "react": ">=16.8.0",
+        "react-dom": ">=16.8.0"
+    },
+    "devDependencies": {
+        "@types/react": "^18.0.0",
+        "@types/react-dom": "^18.0.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "@ehfuse/forma": "^1.7.1"
+    }
+}
