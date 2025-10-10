@@ -23,7 +23,6 @@
  */
 
 import React, { useEffect, useRef, useState } from "react";
-import { useGlobalFormaState } from "@ehfuse/forma";
 import { parsePosition } from "./utils";
 import { MapContext } from "./hook/useKakaoLoader";
 import { MapProps, KakaoMap, KakaoClusterer, MapState } from "./types";
@@ -80,35 +79,9 @@ export const Map: React.FC<MapProps> = ({
     const [clustererInstance, setClustererInstance] =
         useState<KakaoClusterer | null>(null);
 
-    // Map 내부 상태 관리 (forma)
-    // props로 받은 값을 내부 상태로 관리
-    const mapState = useGlobalFormaState<MapState>({
-        stateId: "kakao-map-internal",
-        initialValues: {
-            level,
-            zoomControl,
-            zoomControlPosition,
-            mapTypeControl,
-            mapTypeControlPosition,
-            draggable,
-            wheelZoom,
-            traffic,
-            terrain,
-        },
-    });
-
-    // props 변경 시 내부 상태 동기화
-    useEffect(() => {
-        mapState.setValue("level", level);
-        mapState.setValue("zoomControl", zoomControl);
-        mapState.setValue("zoomControlPosition", zoomControlPosition);
-        mapState.setValue("mapTypeControl", mapTypeControl);
-        mapState.setValue("mapTypeControlPosition", mapTypeControlPosition);
-        mapState.setValue("draggable", draggable);
-        mapState.setValue("wheelZoom", wheelZoom);
-        mapState.setValue("traffic", traffic);
-        mapState.setValue("terrain", terrain);
-    }, [
+    // Map 내부 상태 관리
+    // props로 받은 값을 내부 상태로 관리 (필요시 확장 가능)
+    const [mapState] = useState<MapState>({
         level,
         zoomControl,
         zoomControlPosition,
@@ -118,8 +91,7 @@ export const Map: React.FC<MapProps> = ({
         wheelZoom,
         traffic,
         terrain,
-        mapState,
-    ]);
+    });
 
     // 카카오맵 로드와 초기화
     useEffect(() => {
@@ -130,9 +102,9 @@ export const Map: React.FC<MapProps> = ({
                 return;
             }
 
-            // 이미 스크립트가 추가되었는지 확인
+            // 이미 스크립트가 추가되었는지 확인 (dapi.kakao.com 또는 kakao.maps.sdk 포함)
             const script = document.querySelector(
-                'script[src*="kakao.maps.sdk"]'
+                'script[src*="dapi.kakao.com"], script[src*="kakao.maps.sdk"]'
             );
             if (script) {
                 // 스크립트 로드 완료 대기
@@ -145,7 +117,7 @@ export const Map: React.FC<MapProps> = ({
                 return;
             }
 
-            // apiKey가 제공된 경우에만 동적으로 스크립트 로드
+            // apiKey가 제공되지 않고 스크립트도 없는 경우에만 에러
             if (!apiKey) {
                 console.error(
                     "카카오맵 API 키가 필요합니다. " +

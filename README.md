@@ -8,7 +8,7 @@ React에서 Kakao Maps API를 쉽게 사용할 수 있는 컴포넌트 라이브
 -   🎯 **TypeScript 지원** - 완벽한 타입 정의 제공
 -   🪝 **강력한 Hooks** - `useKakaoMap`으로 모든 기능을 하나의 훅으로 사용
 -   🎨 **커스터마이징** - 마커, 오버레이 등 자유롭게 커스터마이징
--   ⚡ **상태 관리 통합** - [@ehfuse/forma](https://github.com/ehfuse/forma) 기반 상태 관리
+-   ⚡ **가벼운 의존성** - React와 React-DOM만 필요
 -   📦 **클러스터링** - 많은 마커를 효율적으로 처리
 
 ## 설치
@@ -87,14 +87,15 @@ const { map, state, searchAddress, createMarker } = useKakaoMap();
 ### 주소 검색
 
 ```tsx
-const { searchAddress, state } = useKakaoMap({
-    stateId: "my-map",
-    initialValues: { center: { lat: 37.5665, lng: 126.978 } },
-});
+import { useState } from "react";
+import { useKakaoMap } from "@ehfuse/kakao-map";
+
+const { searchAddress } = useKakaoMap();
+const [center, setCenter] = useState({ lat: 37.5665, lng: 126.978 });
 
 const handleSearch = async () => {
     const result = await searchAddress("서울시청");
-    state.setValue("center", { lat: result.lat, lng: result.lng });
+    setCenter({ lat: result.lat, lng: result.lng });
 };
 ```
 

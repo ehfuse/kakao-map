@@ -22,8 +22,7 @@
  * SOFTWARE.
  */
 
-import { useCallback, useContext, useMemo } from "react";
-import { useGlobalFormaState } from "@ehfuse/forma";
+import { useCallback, useContext, useMemo, useState } from "react";
 import {
     KakaoPosition,
     KakaoMarker,
@@ -36,12 +35,6 @@ import { MapContext } from "./useKakaoLoader";
  * useKakaoMap 옵션
  */
 export interface UseKakaoMapOptions<T extends MapState = MapState> {
-    /**
-     * 상태 관리를 위한 고유 ID
-     * 같은 stateId를 사용하는 컴포넌트들은 상태를 공유합니다
-     */
-    stateId?: string;
-
     /**
      * 초기 상태 값
      */
@@ -57,11 +50,11 @@ export interface UseKakaoMapOptions<T extends MapState = MapState> {
  * - 주소 검색 (지오코딩)
  * - 장소 검색
  * - 역지오코딩 (좌표 → 주소)
- * - forma 기반 상태 관리 (선택적)
+ * - 상태 관리 (선택적)
  *
  * @example
  * ```tsx
- * // 기본 사용 (상태 관리 없이)
+ * // 기본 사용
  * function MyComponent() {
  *   const kakao = useKakaoMap();
  *
@@ -77,18 +70,15 @@ export interface UseKakaoMapOptions<T extends MapState = MapState> {
  *
  * // 상태 관리와 함께 사용
  * function MyComponent() {
- *   const { isReady, searchAddress, state } = useKakaoMap({
- *     stateId: "my-map",
+ *   const { isReady, searchAddress, state, setState } = useKakaoMap({
  *     initialValues: {
  *       center: { lat: 37.5665, lng: 126.978 },
  *       level: 3
  *     }
  *   });
  *
- *   const center = state.useValue("center");
- *
  *   const handleMove = () => {
- *     state.setValue("center", { lat: 37.5, lng: 127.0 });
+ *     setState(prev => ({ ...prev, center: { lat: 37.5, lng: 127.0 } }));
  *   };
  * }
  * ```
@@ -110,10 +100,7 @@ export const useKakaoMap = <T extends MapState = MapState>(
     }, []);
 
     // 상태 관리 (옵션)
-    const state = useGlobalFormaState<T>({
-        stateId: options?.stateId || "kakao-map-default",
-        initialValues: options?.initialValues || ({} as T),
-    });
+    const [state, setState] = useState<T>((options?.initialValues || {}) as T);
 
     /**
      * 좌표 변환 함수
@@ -458,8 +445,9 @@ export const useKakaoMap = <T extends MapState = MapState>(
         // Map 인스턴스 (MapContext에서 제공, Map 컴포넌트 내부에서만 사용 가능)
         map,
 
-        // 상태 관리 (forma)
+        // 상태 관리
         state,
+        setState,
 
         // 좌표 관련
         parsePosition, // 좌표 변환

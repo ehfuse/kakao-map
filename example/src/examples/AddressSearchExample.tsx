@@ -1,5 +1,6 @@
 import { Map, MapMarker, useKakaoMap } from "../../../src/KakaoMap";
 import type { KakaoLatLng } from "../../../src/types";
+import { useGlobalFormaState } from "@ehfuse/forma";
 
 interface SearchResult {
     address: string;
@@ -19,12 +20,11 @@ interface AddressSearchExampleState {
 }
 
 export function AddressSearchExample() {
-    // useKakaoMap에서 state와 API 유틸리티를 함께 사용
-    const {
-        isReady,
-        searchAddress: kakaoSearchAddress,
-        state,
-    } = useKakaoMap<AddressSearchExampleState>({
+    // useKakaoMap에서 API 유틸리티만 사용
+    const { isReady, searchAddress: kakaoSearchAddress } = useKakaoMap();
+
+    // 상태 관리는 forma로
+    const state = useGlobalFormaState<AddressSearchExampleState>({
         stateId: "address-search-example",
         initialValues: {
             center: { lat: 37.5665, lng: 126.978 },

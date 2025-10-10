@@ -1,6 +1,7 @@
-import { Map, MapMarker, useKakaoMap } from "../../../src/KakaoMap";
+import { Map, MapMarker } from "../../../src/KakaoMap";
 import type { KakaoLatLng } from "../../../src/types";
 import { type ReactElement } from "react";
+import { useGlobalFormaState } from "@ehfuse/forma";
 import {
     NumberedMarker,
     StarMarker,
@@ -23,7 +24,7 @@ interface CustomMarkerExampleState {
 }
 
 export function CustomMarkerExample() {
-    const { state } = useKakaoMap<CustomMarkerExampleState>({
+    const state = useGlobalFormaState<CustomMarkerExampleState>({
         stateId: "custom-marker-example",
         initialValues: {
             center: { lat: 37.5665, lng: 126.978 },

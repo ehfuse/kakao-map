@@ -113,32 +113,26 @@ function App() {
 
 ## useKakaoMap 훅 사용
 
-지도 기능과 상태 관리를 위해 `useKakaoMap` 훅을 사용할 수 있습니다:
+지도 기능과 선택적 상태 관리를 위해 `useKakaoMap` 훅을 사용할 수 있습니다:
+
+### API 유틸리티만 사용
 
 ```tsx
 import { Map, MapMarker, useKakaoMap } from "@ehfuse/kakao-map";
-
-// 비즈니스 로직 상태 타입 정의
-interface MyMapState {
-    selectedPlace: { lat: number; lng: number; name: string } | null;
-    searchKeyword: string;
-}
+import { useState } from "react";
 
 function App() {
-    const { map, state, searchAddress } = useKakaoMap<MyMapState>({
-        stateId: "my-map",
-        initialValues: {
-            selectedPlace: null,
-            searchKeyword: "",
-        },
-    });
-
-    const selectedPlace = state.useValue("selectedPlace");
+    const { searchAddress } = useKakaoMap();
+    const [selectedPlace, setSelectedPlace] = useState<{
+        lat: number;
+        lng: number;
+        name: string;
+    } | null>(null);
 
     const handleSearch = async () => {
         const result = await searchAddress("서울시청");
         if (result) {
-            state.setValue("selectedPlace", {
+            setSelectedPlace({
                 lat: result.lat,
                 lng: result.lng,
                 name: "서울시청",
@@ -172,6 +166,71 @@ function App() {
     );
 }
 ```
+
+### 상태 관리와 함께 사용
+
+```tsx
+import { Map, MapMarker, useKakaoMap } from "@ehfuse/kakao-map";
+
+// 비즈니스 로직 상태 타입 정의
+interface MyMapState {
+    selectedPlace: { lat: number; lng: number; name: string } | null;
+    searchKeyword: string;
+}
+
+function App() {
+    const { state, setState, searchAddress } = useKakaoMap<MyMapState>({
+        initialValues: {
+            selectedPlace: null,
+            searchKeyword: "",
+        },
+    });
+
+    const handleSearch = async () => {
+        const result = await searchAddress("서울시청");
+        if (result) {
+            setState((prev) => ({
+                ...prev,
+                selectedPlace: {
+                    lat: result.lat,
+                    lng: result.lng,
+                    name: "서울시청",
+                },
+            }));
+        }
+    };
+
+    return (
+        <div>
+            <button onClick={handleSearch}>서울시청 찾기</button>
+            <Map
+                center={
+                    state.selectedPlace
+                        ? {
+                              lat: state.selectedPlace.lat,
+                              lng: state.selectedPlace.lng,
+                          }
+                        : { lat: 37.5665, lng: 126.978 }
+                }
+                level={3}
+                style={{ width: "100%", height: "400px" }}
+            >
+                {state.selectedPlace && (
+                    <MapMarker
+                        position={{
+                            lat: state.selectedPlace.lat,
+                            lng: state.selectedPlace.lng,
+                        }}
+                        title={state.selectedPlace.name}
+                    />
+                )}
+            </Map>
+        </div>
+    );
+}
+```
+
+> 💡 **효율적인 상태 관리**: 개별 필드 구독이 필요한 복잡한 애플리케이션에서는 [@ehfuse/forma](https://github.com/ehfuse/forma) 같은 상태 관리 라이브러리를 사용하는 것을 권장합니다. 자세한 내용은 [API 레퍼런스](./api.md#상태-관리)를 참조하세요.
 
 ## 다음 단계
 

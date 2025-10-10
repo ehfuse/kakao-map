@@ -203,20 +203,20 @@ const { map, state, searchAddress, createMarker } = useKakaoMap<MyMapState>({
 
 > 📖 **예제**: [주소 검색](./examples.md#주소-검색), [상태 관리와 통합](./examples.md#상태-관리와-통합)
 
-#### Options
+#### 옵션 (Options)
 
-| Option          | 타입         | 설명                                            |
-| --------------- | ------------ | ----------------------------------------------- |
-| `stateId`       | `string`     | 상태 관리 ID (같은 ID는 상태 공유)              |
-| `initialValues` | `Partial<T>` | 초기 상태 값 (비즈니스 로직 상태, 맵 옵션 아님) |
+| Property        | 타입         | 설명                                                      |
+| --------------- | ------------ | --------------------------------------------------------- |
+| `initialValues` | `Partial<T>` | 초기 상태 값 (선택적, 비즈니스 로직 상태용, 맵 옵션 아님) |
 
 #### 반환값
 
-| Property  | 타입               | 설명                                             |
-| --------- | ------------------ | ------------------------------------------------ |
-| `isReady` | `boolean`          | Kakao Maps API 로드 완료 여부                    |
-| `map`     | `KakaoMap \| null` | Map 인스턴스 (Map 컴포넌트 내부에서만 사용 가능) |
-| `state`   | `FormaState<T>`    | forma 상태 관리 객체                             |
+| Property   | 타입                                      | 설명                                             |
+| ---------- | ----------------------------------------- | ------------------------------------------------ |
+| `isReady`  | `boolean`                                 | Kakao Maps API 로드 완료 여부                    |
+| `map`      | `KakaoMap \| null`                        | Map 인스턴스 (Map 컴포넌트 내부에서만 사용 가능) |
+| `state`    | `T`                                       | 상태 객체 (React useState)                       |
+| `setState` | `React.Dispatch<React.SetStateAction<T>>` | 상태 업데이트 함수 (React setState)              |
 
 #### 좌표 관련
 
@@ -323,11 +323,24 @@ interface MapState {
 
 ---
 
-## 상태 관리 (forma)
+## 상태 관리
 
-`useKakaoMap`은 [@ehfuse/forma](https://github.com/ehfuse/forma)를 사용하여 비즈니스 로직 상태를 관리합니다.
+`useKakaoMap`은 선택적으로 React의 `useState`를 사용하여 비즈니스 로직 상태를 관리할 수 있습니다.
 
 > ⚠️ **주의**: `initialValues`는 **비즈니스 로직 상태**를 위한 것입니다. 맵 옵션(`center`, `level` 등)은 `Map` 컴포넌트의 props로 전달하세요.
+
+### 기본 사용 (API 유틸리티만)
+
+```tsx
+// 상태 관리 없이 API 유틸리티만 사용
+const { isReady, searchAddress, searchPlace } = useKakaoMap();
+
+// 주소 검색
+const result = await searchAddress("서울시청");
+console.log(result.lat, result.lng);
+```
+
+### 상태 관리와 함께 사용
 
 ```tsx
 // 비즈니스 로직 상태 타입 정의
@@ -336,44 +349,67 @@ interface MyMapState {
     markers: Array<{ id: string; position: { lat: number; lng: number } }>;
 }
 
-const { state } = useKakaoMap<MyMapState>({
-    stateId: "my-map",
+const { state, setState, searchAddress } = useKakaoMap<MyMapState>({
     initialValues: {
         selectedPlace: null,
         markers: [],
     },
 });
 
-// 값 읽기 (반응형 - 변경시 리렌더링)
-const selectedPlace = state.useValue("selectedPlace");
-const markers = state.useValue("markers");
+// 값 읽기
+const selectedPlace = state.selectedPlace;
+const markers = state.markers;
 
 // 값 쓰기
-state.setValue("selectedPlace", {
-    lat: 37.4979,
-    lng: 127.0276,
-    name: "강남역",
-});
-state.setValue("markers", [...markers, newMarker]);
+setState((prev) => ({
+    ...prev,
+    selectedPlace: {
+        lat: 37.4979,
+        lng: 127.0276,
+        name: "강남역",
+    },
+}));
+
+setState((prev) => ({
+    ...prev,
+    markers: [...prev.markers, newMarker],
+}));
 
 // 여러 값 동시 변경
-state.setValues({
-    center: { lat: 37.4979, lng: 127.0276 },
-    level: 5,
-});
+setState((prev) => ({
+    ...prev,
+    selectedPlace: { lat: 37.4979, lng: 127.0276, name: "강남역" },
+    markers: [...prev.markers, newMarker],
+}));
 ```
 
-### 상태 공유
+### 효율적인 상태 관리
 
-같은 `stateId`를 사용하는 컴포넌트들은 상태를 공유합니다:
+애플리케이션에서 **개별 필드 구독**을 통한 효율적인 리렌더링이 필요하다면, [@ehfuse/forma](https://github.com/ehfuse/forma)와 같은 상태 관리 라이브러리를 직접 사용하는 것을 권장합니다.
 
 ```tsx
-// ComponentA.tsx
-const { state } = useKakaoMap({ stateId: "shared-map" });
+import { useGlobalFormaState } from "@ehfuse/forma";
+import { useKakaoMap } from "@ehfuse/kakao-map";
 
-// ComponentB.tsx
-const { state } = useKakaoMap({ stateId: "shared-map" });
-// ↑ 같은 stateId → 같은 상태 공유
+// forma로 상태 관리
+const appState = useGlobalFormaState({
+    stateId: "my-app",
+    initialValues: {
+        center: { lat: 37.5665, lng: 126.978 },
+        selectedMarkerId: null,
+    },
+});
+
+// useKakaoMap에서 API 유틸리티만 사용
+const { searchAddress } = useKakaoMap();
+
+// 개별 필드 구독 (해당 필드만 변경되면 리렌더링)
+const center = appState.useValue("center");
+const selectedMarkerId = appState.useValue("selectedMarkerId");
+
+// 값 업데이트
+appState.setValue("center", { lat: 37.4979, lng: 127.0276 });
+appState.setValue("selectedMarkerId", 123);
 ```
 
 ---

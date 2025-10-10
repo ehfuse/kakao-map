@@ -1,6 +1,6 @@
 {
     "name": "@ehfuse/kakao-map",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "React components for Kakao Maps",
     "main": "dist/index.js",
     "module": "dist/index.esm.js",
@@ -38,8 +38,5 @@
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "typescript": "^5.0.0"
-    },
-    "dependencies": {
-        "@ehfuse/forma": "^1.7.1"
     }
 }
