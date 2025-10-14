@@ -301,7 +301,7 @@ function CustomOverlayExample() {
             style={{ width: "100%", height: "400px" }}
         >
             {places.map((place, index) => (
-                <CustomOverlayMap key={index} position={place} yAnchor={1}>
+                <CustomOverlayMap key={index} position={place}>
                     <div
                         style={{
                             padding: "8px 12px",

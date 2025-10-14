@@ -286,14 +286,12 @@ import { CustomOverlayMap } from "@ehfuse/kakao-map";
 
 #### Props
 
-| Prop       | 타입                              | 기본값 | 설명              |
-| ---------- | --------------------------------- | ------ | ----------------- |
-| `position` | [`KakaoPosition`](#kakaoposition) | 필수   | 오버레이 위치     |
-| `content`  | `ReactNode \| string`             | -      | 오버레이 내용     |
-| `xAnchor`  | `number`                          | `0.5`  | 가로 기준점 (0~1) |
-| `yAnchor`  | `number`                          | `0.5`  | 세로 기준점 (0~1) |
-| `zIndex`   | `number`                          | -      | z-index 값        |
-| `visible`  | `boolean`                         | `true` | 표시 여부         |
+| Prop       | 타입                              | 기본값 | 설명          |
+| ---------- | --------------------------------- | ------ | ------------- |
+| `position` | [`KakaoPosition`](#kakaoposition) | 필수   | 오버레이 위치 |
+| `content`  | `ReactNode \| string`             | -      | 오버레이 내용 |
+| `zIndex`   | `number`                          | -      | z-index 값    |
+| `visible`  | `boolean`                         | `true` | 표시 여부     |
 
 ---
 

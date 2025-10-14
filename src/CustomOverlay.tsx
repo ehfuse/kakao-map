@@ -32,8 +32,6 @@ import { CustomOverlayMapProps } from "./types";
 export const CustomOverlayMap: React.FC<CustomOverlayMapProps> = ({
     position,
     content,
-    xAnchor,
-    yAnchor,
     zIndex,
     visible = true,
     children,
@@ -87,8 +85,6 @@ export const CustomOverlayMap: React.FC<CustomOverlayMapProps> = ({
         };
 
         // 선택적으로 옵션 추가 (undefined면 카카오 API 기본값 사용)
-        if (xAnchor !== undefined) options.xAnchor = xAnchor;
-        if (yAnchor !== undefined) options.yAnchor = yAnchor;
         if (zIndex !== undefined) options.zIndex = zIndex;
 
         const overlayInstance = new window.kakao.maps.CustomOverlay(options);
@@ -101,7 +97,7 @@ export const CustomOverlayMap: React.FC<CustomOverlayMapProps> = ({
                 overlayInstance.setMap(null);
             }
         };
-    }, [map, position, content, children, xAnchor, yAnchor, zIndex, visible]);
+    }, [map, position, content, children, zIndex, visible]);
 
     // position, visible 등 속성 업데이트
     useEffect(() => {

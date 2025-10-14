@@ -99,8 +99,6 @@ export const CustomInfoWindow: React.FC<CustomInfoWindowProps> = ({
         return (
             <CustomOverlayMap
                 position={overlayPosition!}
-                xAnchor={0.5}
-                yAnchor={1.0}
                 zIndex={zIndex}
                 visible={shouldShow}
                 content={contentString}

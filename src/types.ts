@@ -348,8 +348,6 @@ export interface MapMarkerProps {
 export interface CustomOverlayMapProps {
     position: KakaoPosition;
     content?: React.ReactNode | string;
-    xAnchor?: number;
-    yAnchor?: number;
     zIndex?: number;
     visible?: boolean;
     children?: React.ReactNode;
@@ -387,7 +385,6 @@ export interface CustomInfoWindowProps {
 
     // 내부 사용 props (자동으로 주입됨)
     marker?: KakaoMarker;
-    // xAnchor, yAnchor는 항상 0.5, 1.0으로 고정되므로 props로 받지 않음
 }
 
 // 하위 호환성을 위한 alias
