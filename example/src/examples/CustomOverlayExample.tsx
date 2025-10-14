@@ -63,11 +63,7 @@ export function CustomOverlayExample() {
                 {/* 커스텀 오버레이 표시 */}
                 {showOverlay &&
                     places.map((place, index) => (
-                        <CustomOverlayMap
-                            key={index}
-                            position={place}
-                            yAnchor={1.2}
-                        >
+                        <CustomOverlayMap key={index} position={place}>
                             <div
                                 style={{
                                     backgroundColor: place.color,
