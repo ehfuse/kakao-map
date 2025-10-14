@@ -1,5 +1,33 @@
 # API 레퍼런스
 
+## 목차
+
+### 컴포넌트
+
+-   [Map](#map) - 지도 메인 컴포넌트
+-   [MapMarker](#mapmarker) - 마커 컴포넌트
+-   [InfoWindow](#infowindow) - 기본 정보창
+-   [CustomInfoWindow](#custominfowindow) - React 커스텀 정보창
+-   [CustomOverlayMap](#customoverlaymap) - 커스텀 오버레이
+
+### 훅 (Hooks)
+
+-   [useKakaoMap](#usekakaomap) - All-in-One 지도 훅
+-   [useMapContext](#usemapcontext) - Map 컨텍스트 훅
+-   [useMarkerContext](#usemarkercontext) - Marker 컨텍스트 훅
+
+### 타입
+
+-   [KakaoPosition](#kakaoposition) - 좌표 타입
+-   [KakaoControlPosition](#kakaocontrolposition) - 컨트롤 위치 타입
+-   [MapState](#mapstate) - 지도 상태 타입
+
+### 기타
+
+-   [상태 관리](#상태-관리) - 상태 관리 패턴
+
+---
+
 ## 컴포넌트
 
 ### Map
@@ -20,23 +48,25 @@ import { Map } from "@ehfuse/kakao-map";
 
 #### Props
 
-| Prop                     | 타입                                            | 기본값       | 설명                       |
-| ------------------------ | ----------------------------------------------- | ------------ | -------------------------- |
-| `center`                 | [`KakaoPosition`](#kakaoposition)               | 필수         | 지도 중심 좌표             |
-| `level`                  | `number`                                        | `3`          | 지도 확대 레벨 (1~14)      |
-| `style`                  | `CSSProperties`                                 | -            | 지도 컨테이너 스타일       |
-| `className`              | `string`                                        | -            | CSS 클래스명               |
-| `apiKey`                 | `string`                                        | -            | Kakao API 키 (동적 로드시) |
-| `draggable`              | `boolean`                                       | `true`       | 드래그 가능 여부           |
-| `zoomable`               | `boolean`                                       | `true`       | 확대/축소 가능 여부        |
-| `wheelZoom`              | `boolean`                                       | `true`       | 마우스 휠 줌 가능 여부     |
-| `zoomControl`            | `boolean`                                       | `false`      | 줌 컨트롤 표시 여부        |
-| `zoomControlPosition`    | [`KakaoControlPosition`](#kakaocontrolposition) | `'RIGHT'`    | 줌 컨트롤 위치             |
-| `mapTypeControl`         | `boolean`                                       | `false`      | 지도 타입 컨트롤 표시 여부 |
-| `mapTypeControlPosition` | [`KakaoControlPosition`](#kakaocontrolposition) | `'TOPRIGHT'` | 지도 타입 컨트롤 위치      |
-| `traffic`                | `boolean`                                       | `false`      | 교통정보 표시 여부         |
-| `terrain`                | `boolean`                                       | `false`      | 지형정보 표시 여부         |
-| `clusterer`              | `boolean`                                       | `false`      | 마커 클러스터링 활성화     |
+| Prop                     | 타입                                            | 기본값       | 설명                              |
+| ------------------------ | ----------------------------------------------- | ------------ | --------------------------------- |
+| `center`                 | [`KakaoPosition`](#kakaoposition)               | 필수         | 지도 중심 좌표                    |
+| `level`                  | `number`                                        | `3`          | 지도 확대 레벨 (1~14)             |
+| `style`                  | `CSSProperties`                                 | -            | 지도 컨테이너 스타일              |
+| `className`              | `string`                                        | -            | CSS 클래스명                      |
+| `apiKey`                 | `string`                                        | -            | Kakao API 키 (동적 로드시)        |
+| `draggable`              | `boolean`                                       | `true`       | 드래그 가능 여부                  |
+| `wheelZoom`              | `boolean`                                       | `true`       | 마우스 휠 줌 가능 여부            |
+| `zoomControl`            | `boolean`                                       | `false`      | 줌 컨트롤 표시 여부               |
+| `zoomControlPosition`    | [`KakaoControlPosition`](#kakaocontrolposition) | `'RIGHT'`    | 줌 컨트롤 위치                    |
+| `mapTypeControl`         | `boolean`                                       | `false`      | 지도 타입 컨트롤 표시 여부        |
+| `mapTypeControlPosition` | [`KakaoControlPosition`](#kakaocontrolposition) | `'TOPRIGHT'` | 지도 타입 컨트롤 위치             |
+| `traffic`                | `boolean`                                       | `false`      | 교통정보 표시 여부                |
+| `terrain`                | `boolean`                                       | `false`      | 지형정보 표시 여부                |
+| `clusterer`              | `boolean`                                       | `false`      | 마커 클러스터링 활성화            |
+| `closeInfoWindowOnClick` | `boolean`                                       | `false`      | 지도 클릭 시 InfoWindow 자동 닫기 |
+| `width`                  | `number \| string`                              | `'100%'`     | 지도 너비                         |
+| `height`                 | `number \| string`                              | `500`        | 지도 높이 (px)                    |
 
 #### 이벤트
 
@@ -66,16 +96,19 @@ import { MapMarker } from "@ehfuse/kakao-map";
 
 #### Props
 
-| Prop        | 타입                              | 기본값  | 설명                                             |
-| ----------- | --------------------------------- | ------- | ------------------------------------------------ |
-| `position`  | [`KakaoPosition`](#kakaoposition) | 필수    | 마커 위치                                        |
-| `title`     | `string`                          | -       | 마커 타이틀 (호버시 표시)                        |
-| `clickable` | `boolean`                         | `false` | 클릭 가능 여부 (onClick 있으면 자동 true)        |
-| `draggable` | `boolean`                         | `false` | 드래그 가능 여부                                 |
-| `zIndex`    | `number`                          | -       | z-index 값                                       |
-| `opacity`   | `number`                          | `1`     | 투명도 (0~1)                                     |
-| `visible`   | `boolean`                         | `true`  | 표시 여부                                        |
-| `clustered` | `boolean`                         | `auto`  | 클러스터 포함 여부 (Map의 clusterer 설정에 따름) |
+| Prop            | 타입                              | 기본값  | 설명                                             |
+| --------------- | --------------------------------- | ------- | ------------------------------------------------ |
+| `position`      | [`KakaoPosition`](#kakaoposition) | 필수    | 마커 위치                                        |
+| `title`         | `string`                          | -       | 마커 타이틀 (호버시 표시)                        |
+| `clickable`     | `boolean`                         | `true`  | 클릭 가능 여부                                   |
+| `draggable`     | `boolean`                         | `false` | 드래그 가능 여부                                 |
+| `zIndex`        | `number`                          | -       | z-index 값                                       |
+| `opacity`       | `number`                          | `1`     | 투명도 (0~1)                                     |
+| `visible`       | `boolean`                         | `true`  | 표시 여부                                        |
+| `clustered`     | `boolean`                         | `auto`  | 클러스터 포함 여부 (Map의 clusterer 설정에 따름) |
+| `centerOnClick` | `boolean`                         | `false` | 클릭 시 지도 중심 이동                           |
+| `zoomOnClick`   | `number`                          | -       | 클릭 시 지도 줌 레벨 설정                        |
+| `children`      | `ReactNode`                       | -       | InfoWindow 등 자식 컴포넌트                      |
 
 #### 커스텀 이미지
 
@@ -147,6 +180,87 @@ import { InfoWindow } from "@ehfuse/kakao-map";
 | Event          | 타입         | 설명           |
 | -------------- | ------------ | -------------- |
 | `onCloseClick` | `() => void` | 닫기 버튼 클릭 |
+
+---
+
+### CustomInfoWindow
+
+React 컴포넌트를 content로 사용할 수 있는 정보창 컴포넌트입니다. `CustomOverlayMap`을 기반으로 InfoWindow 스타일링을 추가한 컴포넌트입니다.
+
+```tsx
+import { CustomInfoWindow } from "@ehfuse/kakao-map";
+
+<MapMarker position={pos}>
+    <CustomInfoWindow
+        content={
+            <div>
+                <h3>서울시청</h3>
+                <p>주소: 서울특별시 중구 세종대로 110</p>
+            </div>
+        }
+    />
+</MapMarker>;
+```
+
+> 📖 **예제**: [CustomInfoWindow](./examples.md#custominfowindow)
+
+#### Props
+
+| Prop           | 타입                              | 기본값 | 설명                                          |
+| -------------- | --------------------------------- | ------ | --------------------------------------------- |
+| `position`     | [`KakaoPosition`](#kakaoposition) | -      | 정보창 위치 (마커 자식이면 자동으로 설정됨)   |
+| `content`      | `ReactElement \| string`          | 필수   | 정보창 내용 (React 컴포넌트 또는 HTML 문자열) |
+| `style`        | `CSSProperties`                   | -      | 정보창 스타일                                 |
+| `arrowStyle`   | `CSSProperties`                   | -      | 화살표 스타일                                 |
+| `zIndex`       | `number`                          | `1000` | z-index 값                                    |
+| `visible`      | `boolean`                         | `true` | 표시 여부                                     |
+| `markerHeight` | `number`                          | `35`   | 마커 높이 (px) - 화살표 위치 계산에 사용      |
+| `marker`       | `KakaoMarker`                     | -      | 마커 인스턴스 (내부 사용, 자동으로 설정됨)    |
+
+#### 특징
+
+-   **React 컴포넌트 지원**: JSX를 content로 직접 사용 가능
+-   **이벤트 핸들러**: onClick 등 모든 React 이벤트 사용 가능
+-   **Hooks 사용 가능**: useState, useEffect 등 모든 React Hooks 사용 가능
+-   **자동 위치 설정**: MapMarker의 자식으로 사용 시 position 자동 설정
+-   **자동 표시 관리**: 선택된 마커에만 자동으로 표시
+-   **커스터마이징**: style, arrowStyle로 완전한 스타일 제어
+
+#### 사용 예제
+
+```tsx
+// MapMarker의 자식으로 사용 (권장)
+<MapMarker position={position}>
+    <CustomInfoWindow
+        content={
+            <div>
+                <h3>장소 정보</h3>
+                <button onClick={() => console.log('클릭!')}>
+                    상세보기
+                </button>
+            </div>
+        }
+    />
+</MapMarker>
+
+// 독립적으로 사용
+<CustomInfoWindow
+    position={{ lat: 37.5665, lng: 126.978 }}
+    marker={markerInstance}
+    content={<MyCustomComponent data={data} />}
+/>
+
+// 커스텀 마커 높이 지정
+<MapMarker
+    position={position}
+    image={{ src: customIcon, size: { width: 50, height: 60 } }}
+>
+    <CustomInfoWindow
+        markerHeight={60}  // 커스텀 마커 높이에 맞춤
+        content={<div>커스텀 마커 정보</div>}
+    />
+</MapMarker>
+```
 
 ---
 
@@ -273,6 +387,68 @@ const marker = createMarker(
 | ------------- | ----------------------------- | ------------------------------ |
 | `getGeocoder` | `() => KakaoGeocoder \| null` | Geocoder 인스턴스 (저수준 API) |
 | `getPlaces`   | `() => KakaoPlaces \| null`   | Places 인스턴스 (저수준 API)   |
+
+---
+
+### useMapContext
+
+Map 컨텍스트에 접근하는 훅입니다. Map 컴포넌트 내부에서만 사용 가능합니다.
+
+```tsx
+import { useMapContext } from "@ehfuse/kakao-map";
+
+function MyComponent() {
+    const { map, selectedMarker, setSelectedMarker } = useMapContext();
+
+    // selectedMarker: 현재 선택된 마커
+    // setSelectedMarker: 마커 선택 상태 변경
+}
+```
+
+#### 반환값
+
+| Property            | 타입                                    | 설명                      |
+| ------------------- | --------------------------------------- | ------------------------- |
+| `map`               | `KakaoMap`                              | 지도 인스턴스             |
+| `clusterer`         | `KakaoClusterer \| null`                | 클러스터러 인스턴스       |
+| `selectedMarker`    | `KakaoMarker \| null`                   | 현재 선택된 마커          |
+| `setSelectedMarker` | `(marker: KakaoMarker \| null) => void` | 선택된 마커 설정          |
+| `isUnmountingRef`   | `MutableRefObject<boolean>`             | 언마운트 상태 (내부 사용) |
+
+---
+
+### useMarkerContext
+
+Marker 컨텍스트에 접근하는 훅입니다. MapMarker 컴포넌트 내부에서만 사용 가능합니다.
+
+```tsx
+import { useMarkerContext } from "@ehfuse/kakao-map";
+
+function InfoContent() {
+    const { marker, position } = useMarkerContext();
+
+    return (
+        <div>
+            <p>위도: {position.lat}</p>
+            <p>경도: {position.lng}</p>
+        </div>
+    );
+}
+
+// MapMarker의 자식에서 사용
+<MapMarker position={pos}>
+    <CustomInfoWindow content={<InfoContent />} />
+</MapMarker>;
+```
+
+#### 반환값
+
+| Property   | 타입          | 설명                     |
+| ---------- | ------------- | ------------------------ |
+| `marker`   | `KakaoMarker` | 마커 인스턴스            |
+| `position` | `KakaoLatLng` | 마커 위치 `{ lat, lng }` |
+
+> **참고**: `useMarkerContext`는 MapMarker의 자식 컴포넌트에서만 사용할 수 있습니다. 외부에서 호출하면 에러가 발생합니다.
 
 ---
 

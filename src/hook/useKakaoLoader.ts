@@ -24,16 +24,34 @@
 
 // Map Context 생성
 
-import { createContext, useContext } from "react";
+import { createContext, useContext, MutableRefObject } from "react";
+import type { KakaoMap, KakaoClusterer, KakaoMarker } from "../types";
 
-export const MapContext = createContext<any>(null);
+// MapContext는 map 인스턴스, 클러스터러, 언마운트 플래그, 선택된 마커를 함께 전달
+export interface MapContextValue {
+    map: KakaoMap;
+    clusterer: KakaoClusterer | null;
+    isUnmountingRef: MutableRefObject<boolean>;
+    selectedMarker: KakaoMarker | null;
+    setSelectedMarker: (marker: KakaoMarker | null) => void;
+}
+
+export const MapContext = createContext<MapContextValue | null>(null);
 
 // 맵 관련 훅
 
 export const useMap = () => {
-    const map = useContext(MapContext);
-    if (!map) {
+    const context = useContext(MapContext);
+    if (!context) {
         throw new Error("useMap must be used within a Map Provider");
     }
-    return map;
+    return context.map;
+};
+
+export const useMapContext = () => {
+    const context = useContext(MapContext);
+    if (!context) {
+        throw new Error("useMapContext must be used within a Map Provider");
+    }
+    return context;
 };

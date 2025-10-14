@@ -1,6 +1,6 @@
 {
     "name": "@ehfuse/kakao-map",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "description": "React components for Kakao Maps",
     "main": "dist/index.js",
     "module": "dist/esm/index.js",

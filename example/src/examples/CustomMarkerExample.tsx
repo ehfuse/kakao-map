@@ -366,8 +366,6 @@ export function CustomMarkerExample() {
                 center={center}
                 level={level}
                 style={{
-                    width: "100%",
-                    height: "500px",
                     borderRadius: "8px",
                     marginTop: "24px",
                 }}

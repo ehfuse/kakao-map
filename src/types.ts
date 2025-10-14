@@ -208,6 +208,8 @@ declare global {
                     open: (map: KakaoMap, marker?: KakaoMarker) => void;
                     close: () => void;
                     setMap: (map: KakaoMap | null) => void;
+                    setPosition: (position: KakaoLatLngInstance) => void;
+                    setContent: (content: string | HTMLElement) => void;
                 };
                 CustomOverlay: new (options: {
                     position: KakaoLatLngInstance;
@@ -257,11 +259,12 @@ export interface MapProps {
     // 지도 옵션
     className?: string;
     style?: React.CSSProperties;
+    width?: string | number; // 지도 너비 (예: "100%", 500)
+    height?: string | number; // 지도 높이 (예: "500px", 500)
     level?: number;
     maxLevel?: number;
     minLevel?: number;
     draggable?: boolean;
-    zoomable?: boolean;
     wheelZoom?: boolean;
     disableDoubleClick?: boolean;
     disableDoubleClickZoom?: boolean;
@@ -280,6 +283,9 @@ export interface MapProps {
 
     // 지도 타입
     mapTypeId?: KakaoMapTypeId;
+
+    // InfoWindow 자동 닫기
+    closeInfoWindowOnClick?: boolean;
 
     // 이벤트 핸들러
     onCreate?: (map: KakaoMap, clusterer: KakaoClusterer | null) => void;
@@ -322,6 +328,10 @@ export interface MapMarkerProps {
     clustered?: boolean; // false면 클러스터에서 제외. undefined면 Map의 clusterer 설정에 따라 자동 결정
     clusterer?: KakaoClusterer; // 직접 클러스터러 인스턴스 전달 (고급 사용)
 
+    // 클릭 시 동작 옵션
+    centerOnClick?: boolean; // true면 마커 클릭 시 해당 마커가 지도 중앙으로 이동
+    zoomOnClick?: number; // 숫자 설정 시 마커 클릭 시 지도 줌 레벨을 이 값으로 변경 (1-14), undefined면 줌 변경 안 함
+
     // 이벤트 핸들러
     onClick?: (marker: KakaoMarker) => void;
     onMouseOver?: (marker: KakaoMarker) => void;
@@ -345,10 +355,10 @@ export interface CustomOverlayMapProps {
     children?: React.ReactNode;
 }
 
-// InfoWindow Props 타입 정의
+// InfoWindow Props 타입 정의 (네이티브 카카오 InfoWindow)
 export interface InfoWindowProps {
     position?: KakaoPosition;
-    content?: React.ReactNode | string | HTMLElement;
+    content: string | HTMLElement; // 문자열 또는 HTML 엘리먼트만 지원
     disableAutoPan?: boolean;
     removable?: boolean;
     zIndex?: number;
@@ -364,6 +374,24 @@ export interface InfoWindowProps {
     // 내부 사용 props (자동으로 주입됨)
     marker?: KakaoMarker;
 }
+
+// CustomInfoWindow Props 타입 정의 (React 컴포넌트, 문자열, HTML 엘리먼트 모두 지원)
+export interface CustomInfoWindowProps {
+    position?: KakaoPosition; // marker가 제공되면 선택사항
+    content: React.ReactElement | string | HTMLElement;
+    style?: React.CSSProperties; // 컨테이너 스타일 (content가 React.ReactElement일 때만 적용)
+    arrowStyle?: React.CSSProperties; // 화살표 스타일 (content가 React.ReactElement일 때만 적용)
+    zIndex?: number;
+    visible?: boolean;
+    markerHeight?: number; // 마커 높이 (px), 기본값 35px (카카오 기본 마커)
+
+    // 내부 사용 props (자동으로 주입됨)
+    marker?: KakaoMarker;
+    // xAnchor, yAnchor는 항상 0.5, 1.0으로 고정되므로 props로 받지 않음
+}
+
+// 하위 호환성을 위한 alias
+export type CustomOverlayInfoWindowProps = CustomInfoWindowProps;
 
 // 검색 결과 타입 정의
 export interface KakaoSearchResult {

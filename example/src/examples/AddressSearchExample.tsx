@@ -268,11 +268,7 @@ export function AddressSearchExample() {
                 )}
             </div>
 
-            <Map
-                center={center}
-                level={level}
-                style={{ width: "100%", height: "500px", borderRadius: "8px" }}
-            >
+            <Map center={center} level={level} style={{ borderRadius: "8px" }}>
                 {searchResult && (
                     <MapMarker
                         position={{

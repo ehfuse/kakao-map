@@ -32,8 +32,8 @@ import { CustomOverlayMapProps } from "./types";
 export const CustomOverlayMap: React.FC<CustomOverlayMapProps> = ({
     position,
     content,
-    xAnchor = 0.5,
-    yAnchor = 0.5,
+    xAnchor,
+    yAnchor,
     zIndex,
     visible = true,
     children,
@@ -52,10 +52,19 @@ export const CustomOverlayMap: React.FC<CustomOverlayMapProps> = ({
         if (!containerRef.current) {
             containerRef.current = document.createElement("div");
             containerRef.current.className = "kakao-custom-overlay";
-            containerRef.current.style.pointerEvents = "none";
-            // 추가 스타일로 확실히 차단
-            containerRef.current.style.position = "absolute";
-            containerRef.current.style.zIndex = "auto";
+            // 클릭 이벤트를 허용하여 내부 요소 상호작용 가능하게 함
+            containerRef.current.style.pointerEvents = "auto";
+
+            // 지도 클릭 이벤트가 overlay까지 전파되지 않도록 막기
+            containerRef.current.addEventListener("click", (e) => {
+                e.stopPropagation();
+            });
+            containerRef.current.addEventListener("dblclick", (e) => {
+                e.stopPropagation();
+            });
+            containerRef.current.addEventListener("mousedown", (e) => {
+                e.stopPropagation();
+            });
         }
 
         // React 루트 생성 (한 번만)
@@ -75,10 +84,11 @@ export const CustomOverlayMap: React.FC<CustomOverlayMapProps> = ({
             position: parsedPosition,
             content: content || containerRef.current,
             map: visible ? map : null,
-            xAnchor,
-            yAnchor,
         };
 
+        // 선택적으로 옵션 추가 (undefined면 카카오 API 기본값 사용)
+        if (xAnchor !== undefined) options.xAnchor = xAnchor;
+        if (yAnchor !== undefined) options.yAnchor = yAnchor;
         if (zIndex !== undefined) options.zIndex = zIndex;
 
         const overlayInstance = new window.kakao.maps.CustomOverlay(options);

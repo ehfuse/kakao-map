@@ -25,7 +25,7 @@ function App() {
         { id: "cluster" as TabType, label: "클러스터", icon: "📍" },
         { id: "infowindow" as TabType, label: "InfoWindow", icon: "💬" },
         { id: "customoverlay" as TabType, label: "CustomOverlay", icon: "✨" },
-        { id: "custommarker" as TabType, label: "커스텀 마커", icon: "🎨" },
+        { id: "custommarker" as TabType, label: "커스텀 마커", icon: "🖼️" },
         { id: "address" as TabType, label: "주소 검색", icon: "🔍" },
     ];
 

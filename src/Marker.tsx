@@ -29,6 +29,7 @@
 import React, {
     Children,
     cloneElement,
+    createContext,
     isValidElement,
     ReactElement,
     useContext,
@@ -36,10 +37,25 @@ import React, {
     useMemo,
     useState,
 } from "react";
-import { MapMarkerProps, KakaoMarker } from "./types";
-import { useMap } from "./hook/useKakaoLoader";
-import { ClustererContext } from "./Map";
+import { MapMarkerProps, KakaoMarker, KakaoLatLng } from "./types";
+import { useMapContext } from "./hook/useKakaoLoader";
 import { parsePosition, reactSvgToDataUrl } from "./utils";
+
+// MarkerContext: 마커 정보를 자식 컴포넌트에 제공
+interface MarkerContextValue {
+    marker: KakaoMarker;
+    position: KakaoLatLng;
+}
+
+const MarkerContext = createContext<MarkerContextValue | null>(null);
+
+export const useMarkerContext = () => {
+    const context = useContext(MarkerContext);
+    if (!context) {
+        throw new Error("useMarkerContext must be used within a MapMarker");
+    }
+    return context;
+};
 
 // React.memo 적용하여 불필요한 리렌더링 방지
 export const MapMarker = React.memo<MapMarkerProps>(
@@ -47,12 +63,14 @@ export const MapMarker = React.memo<MapMarkerProps>(
         position,
         image,
         title,
-        clickable = false,
+        clickable = true, // 기본값을 true로 변경
         draggable = false,
         zIndex,
         opacity = 1,
         altitude,
         range,
+        centerOnClick = false,
+        zoomOnClick,
         onClick,
         onMouseOver,
         onMouseOut,
@@ -63,8 +81,12 @@ export const MapMarker = React.memo<MapMarkerProps>(
         clustered, // 새로운 prop - undefined면 자동으로 context clusterer 사용, false면 명시적 제외
         clusterer: clustererProp,
     }) => {
-        const map = useMap();
-        const contextClusterer = useContext(ClustererContext);
+        const {
+            map,
+            clusterer: contextClusterer,
+            isUnmountingRef,
+            setSelectedMarker,
+        } = useMapContext();
 
         // 클러스터러 결정 로직:
         // 1. prop으로 clusterer를 직접 전달한 경우 사용
@@ -87,17 +109,24 @@ export const MapMarker = React.memo<MapMarkerProps>(
             }
 
             // 마커 옵션
-            // onClick 이벤트가 있으면 자동으로 clickable을 true로 설정
+            // clickable은 기본적으로 true (명시적으로 false를 설정한 경우만 false)
             const options: any = {
                 position: kakaoPosition,
                 map,
                 title,
-                clickable: onClick ? true : clickable,
+                clickable: clickable !== false, // undefined 또는 true면 true, false만 false
                 draggable,
                 opacity,
                 visible,
                 zIndex,
             };
+
+            // console.log("Creating marker with options:", {
+            //     clickable: options.clickable,
+            //     centerOnClick,
+            //     zoomOnClick,
+            //     title,
+            // });
 
             // 이미지 설정
             if (image) {
@@ -149,14 +178,50 @@ export const MapMarker = React.memo<MapMarkerProps>(
             // 마커 생성
             const markerInstance = new window.kakao.maps.Marker(options);
 
-            // 이벤트 리스너 등록
-            if (onClick) {
-                window.kakao.maps.event.addListener(
-                    markerInstance,
-                    "click",
-                    () => onClick(markerInstance)
-                );
-            }
+            // 이벤트 리스너 등록 - 항상 등록하여 context의 selectedMarker 업데이트
+            window.kakao.maps.event.addListener(markerInstance, "click", () => {
+                console.log("Marker clicked!", { centerOnClick, zoomOnClick });
+                const markerPosition = markerInstance.getPosition();
+
+                // 줌과 센터 이동을 함께 사용할 때는 센터 이동 후 줌
+                if (zoomOnClick !== undefined && centerOnClick) {
+                    console.log("Both center and zoom");
+
+                    // 1. 센터로 이동 (애니메이션 있음)
+                    map.panTo(markerPosition);
+                    // 2. 이동 애니메이션이 완료된 후 줌 레벨 변경 (애니메이션 없음)
+                    setTimeout(() => {
+                        map.setLevel(zoomOnClick, { animate: false });
+                        // 3. 이동/줌 완료 후 선택된 마커 설정
+                        setSelectedMarker(markerInstance);
+                    }, 300);
+                } else {
+                    // 개별 사용 시
+                    if (zoomOnClick !== undefined) {
+                        console.log("Setting zoom level to", zoomOnClick);
+                        map.setLevel(zoomOnClick, { animate: false });
+                    }
+                    if (centerOnClick) {
+                        console.log("Moving to center");
+                        map.panTo(markerPosition);
+                    }
+
+                    // centerOnClick나 zoomOnClick 중 하나라도 있으면 지연 후 설정
+                    if (centerOnClick || zoomOnClick !== undefined) {
+                        setTimeout(() => {
+                            setSelectedMarker(markerInstance);
+                        }, 350);
+                    } else {
+                        // 둘 다 없으면 즉시 설정
+                        setSelectedMarker(markerInstance);
+                    }
+                }
+
+                // onClick 핸들러 호출
+                if (onClick) {
+                    onClick(markerInstance);
+                }
+            });
 
             if (onMouseOver) {
                 window.kakao.maps.event.addListener(
@@ -201,10 +266,21 @@ export const MapMarker = React.memo<MapMarkerProps>(
             setMarker(markerInstance);
 
             return () => {
-                if (clusterer) {
-                    clusterer.removeMarker(markerInstance);
+                // 성능 최적화: 부모 Map이 언마운트 중이면 개별 마커 cleanup 스킵
+                // Map 컴포넌트가 clusterer.clear()로 모든 마커를 한 번에 정리함
+                if (isUnmountingRef?.current) {
+                    return;
                 }
-                markerInstance.setMap(null);
+
+                // 개별 마커 언마운트 시에만 실행
+                try {
+                    if (clusterer) {
+                        clusterer.removeMarker(markerInstance);
+                    }
+                    markerInstance.setMap(null);
+                } catch (e) {
+                    // 에러 무시 - 지도나 마커가 이미 정리된 경우
+                }
             };
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [
@@ -220,21 +296,25 @@ export const MapMarker = React.memo<MapMarkerProps>(
 
         // 두 번째 useEffect 제거 - 위의 첫 번째 useEffect에서 모든 속성을 설정
 
-        // 자식 컴포넌트 메모이제이션
-        const memoizedChildren = useMemo(
-            () =>
-                Children.map(children, (child) => {
-                    if (!isValidElement(child)) return child;
-                    return cloneElement(child as React.ReactElement<any>, {
-                        marker,
-                    });
-                }),
-            [children, marker]
-        );
-
-        // 자식 컴포넌트에 마커 전달
+        // 자식 컴포넌트에 마커 컨텍스트 제공
         if (!marker || !children) return null;
 
-        return <>{memoizedChildren}</>;
+        // position을 KakaoLatLng로 변환
+        const markerPosition = marker.getPosition();
+        const latLng: KakaoLatLng = {
+            lat: markerPosition.getLat(),
+            lng: markerPosition.getLng(),
+        };
+
+        const contextValue: MarkerContextValue = {
+            marker,
+            position: latLng,
+        };
+
+        return (
+            <MarkerContext.Provider value={contextValue}>
+                {children}
+            </MarkerContext.Provider>
+        );
     }
 );

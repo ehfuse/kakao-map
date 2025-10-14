@@ -54,11 +54,7 @@ export function CustomOverlayExample() {
                 </button>
             </div>
 
-            <Map
-                center={center}
-                level={level}
-                style={{ width: "100%", height: "500px", borderRadius: "8px" }}
-            >
+            <Map center={center} level={level} style={{ borderRadius: "8px" }}>
                 {/* 마커 표시 */}
                 {places.map((place, index) => (
                     <MapMarker key={index} position={place} />

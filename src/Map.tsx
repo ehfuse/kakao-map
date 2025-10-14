@@ -27,30 +27,27 @@ import { parsePosition } from "./utils";
 import { MapContext } from "./hook/useKakaoLoader";
 import { MapProps, KakaoMap, KakaoClusterer, MapState } from "./types";
 
-// ClustererContext 생성
-export const ClustererContext = React.createContext<KakaoClusterer | null>(
-    null
-);
-
 /**
  * Map 컴포넌트
  */
 export const Map: React.FC<MapProps> = ({
     center,
     children,
-    style = { width: "100%", height: "100%" },
+    style,
+    width = "100%", // 기본 너비를 100%로 설정
+    height = 500, // 기본 높이를 500px로 설정
     className,
     level = 3,
     maxLevel,
     minLevel,
     draggable = true,
-    zoomable = true,
     wheelZoom = true,
     disableDoubleClick,
     disableDoubleClickZoom,
     keyboardShortcuts = true,
     tileAnimation = true,
     mapTypeId = "ROADMAP",
+    closeInfoWindowOnClick = false,
     onCreate,
     onClick,
     onRightClick,
@@ -78,6 +75,8 @@ export const Map: React.FC<MapProps> = ({
     const [map, setMap] = useState<KakaoMap | null>(null);
     const [clustererInstance, setClustererInstance] =
         useState<KakaoClusterer | null>(null);
+    const [selectedMarker, setSelectedMarker] = useState<any>(null);
+    const isUnmountingRef = useRef<boolean>(false);
 
     // Map 내부 상태 관리
     // props로 받은 값을 내부 상태로 관리 (필요시 확장 가능)
@@ -149,7 +148,24 @@ export const Map: React.FC<MapProps> = ({
         loadKakaoMap();
 
         return () => {
-            // 정리 로직
+            // 언마운트 플래그 설정 - 자식 마커들이 개별 cleanup을 스킵하도록
+            isUnmountingRef.current = true;
+
+            // 컴포넌트 언마운트 시 정리
+            // 클러스터러만 정리 - setMap(null)은 리렌더링을 유발하므로 제거
+            if (clustererInstance) {
+                try {
+                    // 클러스터러의 모든 마커를 한 번에 정리
+                    clustererInstance.clear();
+                } catch (e) {
+                    // 에러 무시
+                }
+            }
+
+            // setMap(null) 제거:
+            // - 이미 isUnmountingRef로 자식 마커들의 cleanup이 스킵됨
+            // - 언마운트 시 불필요한 리렌더링 방지
+            // - 브라우저가 DOM을 정리할 것임
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [apiKey, wheelZoom]);
@@ -265,12 +281,26 @@ export const Map: React.FC<MapProps> = ({
             mapInstance.setMapTypeId(window.kakao.maps.MapTypeId[mapTypeId]);
 
             // 이벤트 리스너 등록
-            if (onClick) {
+            if (onClick || closeInfoWindowOnClick) {
                 window.kakao.maps.event.addListener(
                     mapInstance,
                     "click",
                     (mouseEvent: any) => {
-                        onClick(mouseEvent, mapInstance);
+                        // 마커나 오버레이를 클릭한 경우 Map의 onClick을 무시
+                        // target이 존재하면 마커/오버레이 클릭으로 간주
+                        if (mouseEvent.target) {
+                            return;
+                        }
+
+                        // closeInfoWindowOnClick이 true면 선택된 마커를 null로 설정
+                        if (closeInfoWindowOnClick) {
+                            setSelectedMarker(null);
+                        }
+
+                        // onClick 콜백 호출
+                        if (onClick) {
+                            onClick(mouseEvent, mapInstance);
+                        }
                     }
                 );
             }
@@ -401,13 +431,6 @@ export const Map: React.FC<MapProps> = ({
             // 생성 콜백
             if (onCreate) {
                 onCreate(mapInstance, newClustererInstance);
-            } else if (clusterer && newClustererInstance) {
-                // clusterer가 활성화되었는데 onCreate 콜백이 없으면 경고
-                console.warn(
-                    "⚠️ Map 컴포넌트에 clusterer={true}가 설정되었지만 onCreate 콜백이 없습니다.\n" +
-                        "클러스터러를 사용하려면 onCreate 콜백에서 clustererInstance를 받아야 합니다.\n" +
-                        "예시: onCreate={(map, clusterer) => setClusterer(clusterer)}"
-                );
             }
 
             console.debug("지도 생성 완료");
@@ -434,9 +457,6 @@ export const Map: React.FC<MapProps> = ({
 
             // 다른 옵션 업데이트
             map.setDraggable(draggable);
-            if (wheelZoom !== undefined) {
-                map.setZoomable(wheelZoom);
-            }
 
             // 지도 타입 업데이트
             map.setMapTypeId(window.kakao.maps.MapTypeId[mapTypeId]);
@@ -477,13 +497,32 @@ export const Map: React.FC<MapProps> = ({
         }
     }, [map, traffic, terrain, roadView]);
 
+    // width, height를 style에 병합
+    const mergedStyle = React.useMemo(() => {
+        const baseStyle = { ...style };
+        if (width !== undefined) {
+            baseStyle.width = typeof width === "number" ? `${width}px` : width;
+        }
+        if (height !== undefined) {
+            baseStyle.height =
+                typeof height === "number" ? `${height}px` : height;
+        }
+        return baseStyle;
+    }, [style, width, height]);
+
     return (
-        <div ref={mapRef} className={className} style={style}>
+        <div ref={mapRef} className={className} style={mergedStyle}>
             {map && (
-                <MapContext.Provider value={map}>
-                    <ClustererContext.Provider value={clustererInstance}>
-                        {children}
-                    </ClustererContext.Provider>
+                <MapContext.Provider
+                    value={{
+                        map,
+                        clusterer: clustererInstance,
+                        isUnmountingRef,
+                        selectedMarker,
+                        setSelectedMarker,
+                    }}
+                >
+                    {children}
                 </MapContext.Provider>
             )}
         </div>

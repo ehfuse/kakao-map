@@ -26,10 +26,16 @@
 export { Map } from "./Map";
 export { MapMarker } from "./Marker";
 export { InfoWindow } from "./InfoWindow";
+export { CustomInfoWindow } from "./CustomInfoWindow";
 export { CustomOverlayMap } from "./CustomOverlay";
+
+// 하위 호환성을 위한 alias
+export { CustomInfoWindow as CustomOverlayInfoWindow } from "./CustomInfoWindow";
 
 // 훅 export
 export { useKakaoMap } from "./hook/useKakaoMap";
+export { useMapContext } from "./hook/useKakaoLoader";
+export { useMarkerContext } from "./Marker";
 
 // 타입 export
 export type {
@@ -45,6 +51,7 @@ export type {
     MapProps,
     MapMarkerProps,
     InfoWindowProps,
+    CustomOverlayInfoWindowProps,
     CustomOverlayMapProps,
     MapState,
 } from "./types";

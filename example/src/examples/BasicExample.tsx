@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useGlobalFormaState } from "@ehfuse/forma";
-import { Map, MapMarker } from "../../../src/KakaoMap";
+import { Map, MapMarker, CustomInfoWindow } from "../../../src/KakaoMap";
 import type { KakaoLatLng, KakaoControlPosition } from "../../../src/types";
 
 // 비즈니스 로직 상태만 정의
@@ -8,6 +8,85 @@ interface BasicExampleState {
     center: KakaoLatLng;
     level: number;
     markerPosition: KakaoLatLng;
+}
+
+// InfoWindow 컨텐츠 컴포넌트
+function InfoWindowContent({
+    position,
+    onClose,
+}: {
+    position?: KakaoLatLng;
+    onClose?: () => void;
+}) {
+    const [count, setCount] = useState(0);
+
+    if (!position) return null;
+
+    return (
+        <div style={{ minWidth: "200px" }}>
+            <h3
+                style={{
+                    margin: "0 0 12px 0",
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                }}
+            >
+                📍 클릭한 위치
+            </h3>
+            <p
+                style={{
+                    margin: "0 0 12px 0",
+                    fontSize: "14px",
+                    color: "#666",
+                }}
+            >
+                위도: {position.lat.toFixed(4)}
+                <br />
+                경도: {position.lng.toFixed(4)}
+            </p>
+            <div
+                style={{
+                    display: "flex",
+                    gap: "8px",
+                    marginTop: "12px",
+                }}
+            >
+                <button
+                    onClick={() => setCount(count + 1)}
+                    style={{
+                        flex: 1,
+                        padding: "8px 12px",
+                        backgroundColor: "#4CAF50",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                    }}
+                >
+                    👆 클릭: {count}
+                </button>
+                {onClose && (
+                    <button
+                        onClick={onClose}
+                        style={{
+                            padding: "8px 12px",
+                            backgroundColor: "#f44336",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                        }}
+                    >
+                        ✕
+                    </button>
+                )}
+            </div>
+        </div>
+    );
 }
 
 export function BasicExample() {
@@ -220,6 +299,7 @@ export function BasicExample() {
                 wheelZoom={wheelZoom}
                 traffic={traffic}
                 terrain={terrain}
+                closeInfoWindowOnClick={true}
                 onClick={(mouseEvent) => {
                     const latlng = mouseEvent.latLng;
                     appState.setValue("markerPosition", {
@@ -228,7 +308,13 @@ export function BasicExample() {
                     });
                 }}
             >
-                <MapMarker position={markerPosition} title="클릭한 위치" />
+                <MapMarker position={markerPosition} title="클릭한 위치">
+                    <CustomInfoWindow
+                        content={
+                            <InfoWindowContent position={markerPosition} />
+                        }
+                    />
+                </MapMarker>
             </Map>
 
             <div className="info-panel">
