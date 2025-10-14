@@ -180,42 +180,20 @@ export const MapMarker = React.memo<MapMarkerProps>(
 
             // 이벤트 리스너 등록 - 항상 등록하여 context의 selectedMarker 업데이트
             window.kakao.maps.event.addListener(markerInstance, "click", () => {
-                console.log("Marker clicked!", { centerOnClick, zoomOnClick });
                 const markerPosition = markerInstance.getPosition();
 
-                // 줌과 센터 이동을 함께 사용할 때는 센터 이동 후 줌
-                if (zoomOnClick !== undefined && centerOnClick) {
-                    console.log("Both center and zoom");
-
-                    // 1. 센터로 이동 (애니메이션 있음)
-                    map.panTo(markerPosition);
-                    // 2. 이동 애니메이션이 완료된 후 줌 레벨 변경 (애니메이션 없음)
-                    setTimeout(() => {
-                        map.setLevel(zoomOnClick, { animate: false });
-                        // 3. 이동/줌 완료 후 선택된 마커 설정
-                        setSelectedMarker(markerInstance);
-                    }, 300);
-                } else {
-                    // 개별 사용 시
-                    if (zoomOnClick !== undefined) {
-                        console.log("Setting zoom level to", zoomOnClick);
-                        map.setLevel(zoomOnClick, { animate: false });
-                    }
-                    if (centerOnClick) {
-                        console.log("Moving to center");
-                        map.panTo(markerPosition);
-                    }
-
-                    // centerOnClick나 zoomOnClick 중 하나라도 있으면 지연 후 설정
-                    if (centerOnClick || zoomOnClick !== undefined) {
-                        setTimeout(() => {
-                            setSelectedMarker(markerInstance);
-                        }, 350);
-                    } else {
-                        // 둘 다 없으면 즉시 설정
-                        setSelectedMarker(markerInstance);
-                    }
+                // 줌 레벨 변경 (애니메이션 없음)
+                if (zoomOnClick !== undefined) {
+                    map.setLevel(zoomOnClick, { animate: false });
                 }
+
+                // 센터 이동 (애니메이션 없음)
+                if (centerOnClick) {
+                    map.setCenter(markerPosition);
+                }
+
+                // 선택된 마커 설정 (즉시)
+                setSelectedMarker(markerInstance);
 
                 // onClick 핸들러 호출
                 if (onClick) {

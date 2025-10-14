@@ -214,7 +214,7 @@ import { CustomInfoWindow } from "@ehfuse/kakao-map";
 | `arrowStyle`   | `CSSProperties`                   | -      | 화살표 스타일                                 |
 | `zIndex`       | `number`                          | `1000` | z-index 값                                    |
 | `visible`      | `boolean`                         | `true` | 표시 여부                                     |
-| `markerHeight` | `number`                          | `35`   | 마커 높이 (px) - 화살표 위치 계산에 사용      |
+| `markerHeight` | `number`                          | `40`   | 마커 높이 (px) - 화살표 위치 계산에 사용      |
 | `marker`       | `KakaoMarker`                     | -      | 마커 인스턴스 (내부 사용, 자동으로 설정됨)    |
 
 #### 특징
@@ -222,8 +222,9 @@ import { CustomInfoWindow } from "@ehfuse/kakao-map";
 -   **React 컴포넌트 지원**: JSX를 content로 직접 사용 가능
 -   **이벤트 핸들러**: onClick 등 모든 React 이벤트 사용 가능
 -   **Hooks 사용 가능**: useState, useEffect 등 모든 React Hooks 사용 가능
--   **자동 위치 설정**: MapMarker의 자식으로 사용 시 position 자동 설정
--   **자동 표시 관리**: 선택된 마커에만 자동으로 표시
+-   **자동 위치 설정**: MapMarker의 자식으로 사용 시 position과 marker 자동 설정
+-   **자동 표시 관리**: 선택된 마커에만 자동으로 표시 (marker prop 사용 시)
+-   **정확한 위치**: CSS absolute positioning으로 마커 위에 정확히 배치
 -   **커스터마이징**: style, arrowStyle로 완전한 스타일 제어
 
 #### 사용 예제
@@ -243,10 +244,15 @@ import { CustomInfoWindow } from "@ehfuse/kakao-map";
     />
 </MapMarker>
 
-// 독립적으로 사용
+// 독립적으로 사용 (marker 인스턴스 전달)
+<CustomInfoWindow
+    marker={markerInstance}
+    content={<MyCustomComponent data={data} />}
+/>
+
+// 또는 position 직접 지정
 <CustomInfoWindow
     position={{ lat: 37.5665, lng: 126.978 }}
-    marker={markerInstance}
     content={<MyCustomComponent data={data} />}
 />
 

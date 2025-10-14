@@ -133,22 +133,19 @@ export const CustomInfoWindow: React.FC<CustomInfoWindowProps> = ({
     };
 
     // CustomOverlayMap 재활용
-    // marginBottom으로 화살표 공간 확보
+    // absolute positioning으로 마커 위에 정확히 배치
     return (
         <CustomOverlayMap
             position={overlayPosition!}
-            xAnchor={0.5} // 중앙
-            yAnchor={1.0} // 하단
             zIndex={zIndex}
             visible={shouldShow}
         >
             <div
                 style={{
-                    position: "relative",
-                    // 마커 높이 + 화살표 높이(10px)만큼 하단에 공간 확보
-                    // yAnchor=1.0이 마커 하단(땅)을 기준으로 하므로
-                    // 마커 전체 높이만큼 위로 올려서 화살표가 마커 상단을 가리키게 함
-                    marginBottom: `${markerHeight + 10}px`,
+                    position: "absolute",
+                    bottom: `${markerHeight + 10}px`, // 마커 높이 + 화살표 높이만큼 위로
+                    left: "50%",
+                    transform: "translateX(-50%)",
                     pointerEvents: "auto", // 클릭 이벤트 허용
                 }}
             >

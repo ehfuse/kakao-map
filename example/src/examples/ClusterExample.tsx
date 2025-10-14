@@ -1,7 +1,19 @@
 import { useMemo } from "react";
 import { useGlobalFormaState } from "@ehfuse/forma";
-import { Map, MapMarker, CustomInfoWindow } from "../../../src/KakaoMap";
+import {
+    Map,
+    MapMarker,
+    CustomInfoWindow,
+    useMapContext,
+} from "../../../src/KakaoMap";
 import type { KakaoLatLng } from "../../../src/types";
+
+// 마커 데이터 타입
+interface MarkerData {
+    lat: number;
+    lng: number;
+    title: string;
+}
 
 // 비즈니스 로직 상태 정의
 interface ClusterExampleState {
@@ -13,9 +25,56 @@ interface ClusterExampleState {
  * 간단한 클러스터 예제
  * - Map에 clusterer={true} 설정
  * - MapMarker는 자동으로 클러스터에 포함됨 (clustered prop 생략 가능)
- * - closeInfoWindowOnClick으로 맵 클릭 시 InfoWindow 자동 닫기
- * - CustomInfoWindow를 사용하여 React 컴포넌트로 정보 표시
+ * - 1개의 공용 CustomInfoWindow로 선택된 마커 정보 표시 (성능 최적화)
+ * - MapContext의 selectedMarker 활용
  */
+
+// 마커 정보를 저장하는 WeakMap (마커 인스턴스 -> 마커 데이터)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const markerDataMap = new WeakMap<any, MarkerData>();
+
+function ClusterContent() {
+    const { selectedMarker } = useMapContext();
+    const markerData = selectedMarker
+        ? markerDataMap.get(selectedMarker)
+        : null;
+
+    if (!selectedMarker || !markerData) return null;
+
+    return (
+        <CustomInfoWindow
+            marker={selectedMarker}
+            content={
+                <div
+                    style={{
+                        padding: "10px",
+                        minWidth: "150px",
+                    }}
+                >
+                    <h4
+                        style={{
+                            margin: "0 0 8px 0",
+                            fontSize: "14px",
+                            fontWeight: "bold",
+                        }}
+                    >
+                        {markerData.title}
+                    </h4>
+                    <div
+                        style={{
+                            fontSize: "12px",
+                            color: "#666",
+                        }}
+                    >
+                        <div>위도: {markerData.lat.toFixed(4)}</div>
+                        <div>경도: {markerData.lng.toFixed(4)}</div>
+                    </div>
+                </div>
+            }
+        />
+    );
+}
+
 export function ClusterExample() {
     const appState = useGlobalFormaState<ClusterExampleState>({
         stateId: "cluster-example",
@@ -68,7 +127,8 @@ export function ClusterExample() {
                     🎯 {markers.length}개의 마커가 클러스터링되어 표시됩니다. 줌
                     인/아웃하면 마커들이 그룹화되는 것을 확인할 수 있습니다.
                     <br />
-                    💡 CustomInfoWindow를 사용하여 React 컴포넌트로 정보 표시
+                    💡 1개의 공용 CustomInfoWindow로 성능 최적화 (마커 클릭 시
+                    표시)
                 </p>
                 <div className="control-group">
                     <label>줌 레벨</label>
@@ -126,7 +186,7 @@ export function ClusterExample() {
                 style={{ borderRadius: "8px" }}
                 height={800}
                 clusterer={true}
-                closeInfoWindowOnClick={true}
+                closeInfoWindowOnClick={true} // 지도를 클릭하면 InfoWindow 닫기
             >
                 {markers.map((marker, index) => (
                     <MapMarker
@@ -135,38 +195,15 @@ export function ClusterExample() {
                         title={marker.title}
                         centerOnClick={true}
                         zoomOnClick={3}
-                    >
-                        <CustomInfoWindow
-                            content={
-                                <div
-                                    style={{
-                                        padding: "10px",
-                                        minWidth: "150px",
-                                    }}
-                                >
-                                    <h4
-                                        style={{
-                                            margin: "0 0 8px 0",
-                                            fontSize: "14px",
-                                            fontWeight: "bold",
-                                        }}
-                                    >
-                                        {marker.title}
-                                    </h4>
-                                    <div
-                                        style={{
-                                            fontSize: "12px",
-                                            color: "#666",
-                                        }}
-                                    >
-                                        <div>위도: {marker.lat.toFixed(4)}</div>
-                                        <div>경도: {marker.lng.toFixed(4)}</div>
-                                    </div>
-                                </div>
-                            }
-                        />
-                    </MapMarker>
+                        onClick={(markerInstance) => {
+                            // 마커 인스턴스와 데이터를 매핑
+                            markerDataMap.set(markerInstance, marker);
+                        }}
+                    />
                 ))}
+
+                {/* 선택된 마커가 있을 때만 1개의 CustomInfoWindow 표시 */}
+                <ClusterContent />
             </Map>
 
             <div className="info-panel">
