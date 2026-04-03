@@ -25,7 +25,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { parsePosition } from "./utils";
 import { MapContext } from "./hook/useKakaoLoader";
-import { MapProps, KakaoMap, KakaoClusterer, MapState } from "./types";
+import { MapProps, KakaoMap, KakaoClusterer } from "./types";
 
 /**
  * Map 컴포넌트
@@ -78,20 +78,6 @@ export const Map: React.FC<MapProps> = ({
     const [selectedMarker, setSelectedMarker] = useState<any>(null);
     const isUnmountingRef = useRef<boolean>(false);
 
-    // Map 내부 상태 관리
-    // props로 받은 값을 내부 상태로 관리 (필요시 확장 가능)
-    const [mapState] = useState<MapState>({
-        level,
-        zoomControl,
-        zoomControlPosition,
-        mapTypeControl,
-        mapTypeControlPosition,
-        draggable,
-        wheelZoom,
-        traffic,
-        terrain,
-    });
-
     // 카카오맵 로드와 초기화
     useEffect(() => {
         const loadKakaoMap = async () => {
@@ -103,7 +89,7 @@ export const Map: React.FC<MapProps> = ({
 
             // 이미 스크립트가 추가되었는지 확인 (dapi.kakao.com 또는 kakao.maps.sdk 포함)
             const script = document.querySelector(
-                'script[src*="dapi.kakao.com"], script[src*="kakao.maps.sdk"]'
+                'script[src*="dapi.kakao.com"], script[src*="kakao.maps.sdk"]',
             );
             if (script) {
                 // 스크립트 로드 완료 대기
@@ -120,7 +106,7 @@ export const Map: React.FC<MapProps> = ({
             if (!apiKey) {
                 console.error(
                     "카카오맵 API 키가 필요합니다. " +
-                        "index.html에 스크립트를 추가하거나 apiKey prop을 전달해주세요."
+                        "index.html에 스크립트를 추가하거나 apiKey prop을 전달해주세요.",
                 );
                 return;
             }
@@ -133,7 +119,7 @@ export const Map: React.FC<MapProps> = ({
                 libraries.push("clusterer");
             }
             mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false&libraries=${libraries.join(
-                ","
+                ",",
             )}`;
 
             mapScript.onload = () => {
@@ -209,7 +195,7 @@ export const Map: React.FC<MapProps> = ({
             // 지도 생성
             const mapInstance = new window.kakao.maps.Map(
                 mapRef.current,
-                options
+                options,
             );
 
             // 위치 문자열을 카카오 ControlPosition으로 변환하는 헬퍼 함수
@@ -243,7 +229,7 @@ export const Map: React.FC<MapProps> = ({
                 const position = getControlPosition(mapTypeControlPosition);
                 mapInstance.addControl(
                     new (window.kakao.maps as any).MapTypeControl(),
-                    position
+                    position,
                 );
             }
 
@@ -252,28 +238,28 @@ export const Map: React.FC<MapProps> = ({
                 const position = getControlPosition(zoomControlPosition);
                 mapInstance.addControl(
                     new (window.kakao.maps as any).ZoomControl(),
-                    position
+                    position,
                 );
             }
 
             // 로드뷰 레이어 추가
             if (roadView) {
                 mapInstance.addOverlayMapTypeId(
-                    window.kakao.maps.MapTypeId.ROADVIEW
+                    window.kakao.maps.MapTypeId.ROADVIEW,
                 );
             }
 
             // 교통정보 레이어 추가
             if (traffic) {
                 mapInstance.addOverlayMapTypeId(
-                    window.kakao.maps.MapTypeId.TRAFFIC
+                    window.kakao.maps.MapTypeId.TRAFFIC,
                 );
             }
 
             // 지형정보 레이어 추가
             if (terrain) {
                 mapInstance.addOverlayMapTypeId(
-                    window.kakao.maps.MapTypeId.TERRAIN
+                    window.kakao.maps.MapTypeId.TERRAIN,
                 );
             }
 
@@ -301,7 +287,7 @@ export const Map: React.FC<MapProps> = ({
                         if (onClick) {
                             onClick(mouseEvent, mapInstance);
                         }
-                    }
+                    },
                 );
             }
 
@@ -326,7 +312,7 @@ export const Map: React.FC<MapProps> = ({
                     "rightclick",
                     (mouseEvent: any) => {
                         onRightClick(mouseEvent, mapInstance);
-                    }
+                    },
                 );
             }
 
@@ -336,7 +322,7 @@ export const Map: React.FC<MapProps> = ({
                     "dblclick",
                     (mouseEvent: any) => {
                         onDoubleClick(mouseEvent, mapInstance);
-                    }
+                    },
                 );
             }
 
@@ -346,7 +332,7 @@ export const Map: React.FC<MapProps> = ({
                     "mousemove",
                     (mouseEvent: any) => {
                         onMouseMove(mouseEvent, mapInstance);
-                    }
+                    },
                 );
             }
 
@@ -356,7 +342,7 @@ export const Map: React.FC<MapProps> = ({
                     "dragstart",
                     () => {
                         onDragStart(mapInstance);
-                    }
+                    },
                 );
             }
 
@@ -366,7 +352,7 @@ export const Map: React.FC<MapProps> = ({
                     "dragend",
                     () => {
                         onDragEnd(mapInstance);
-                    }
+                    },
                 );
             }
 
@@ -376,7 +362,7 @@ export const Map: React.FC<MapProps> = ({
                     "zoom_changed",
                     () => {
                         onZoomChanged(mapInstance);
-                    }
+                    },
                 );
             }
 
@@ -392,7 +378,7 @@ export const Map: React.FC<MapProps> = ({
                     "tilesloaded",
                     () => {
                         onTilesLoaded(mapInstance, newClustererInstance);
-                    }
+                    },
                 );
             }
 
@@ -402,7 +388,7 @@ export const Map: React.FC<MapProps> = ({
                     "bounds_changed",
                     () => {
                         onBoundsChanged(mapInstance);
-                    }
+                    },
                 );
             }
 
@@ -412,7 +398,7 @@ export const Map: React.FC<MapProps> = ({
                     "center_changed",
                     () => {
                         onCenterChanged(mapInstance);
-                    }
+                    },
                 );
             }
 
@@ -422,7 +408,7 @@ export const Map: React.FC<MapProps> = ({
                     "projection_changed",
                     () => {
                         onProjectionChanged(mapInstance);
-                    }
+                    },
                 );
             }
 
@@ -489,7 +475,7 @@ export const Map: React.FC<MapProps> = ({
                 map.addOverlayMapTypeId(window.kakao.maps.MapTypeId.ROADVIEW);
             } else {
                 map.removeOverlayMapTypeId(
-                    window.kakao.maps.MapTypeId.ROADVIEW
+                    window.kakao.maps.MapTypeId.ROADVIEW,
                 );
             }
         } catch (error) {

@@ -17,7 +17,7 @@
         "src"
     ],
     "scripts": {
-        "build": "tsc && tsc --module esnext --outDir dist/esm",
+        "build": "tsc --module commonjs --moduleResolution node10 --outDir dist && tsc --outDir dist/esm --declaration false --declarationMap false",
         "prepublishOnly": "npm run build"
     },
     "keywords": [

@@ -27,14 +27,10 @@
  */
 
 import React, {
-    Children,
-    cloneElement,
     createContext,
-    isValidElement,
     ReactElement,
     useContext,
     useEffect,
-    useMemo,
     useState,
 } from "react";
 import { MapMarkerProps, KakaoMarker, KakaoLatLng } from "./types";
@@ -132,7 +128,7 @@ export const MapMarker = React.memo<MapMarkerProps>(
             if (image) {
                 const imageSize = new window.kakao.maps.Size(
                     image.size.width,
-                    image.size.height
+                    image.size.height,
                 );
 
                 // ReactNode인 경우 Data URL로 변환
@@ -145,7 +141,7 @@ export const MapMarker = React.memo<MapMarkerProps>(
                 } else {
                     console.error(
                         "지원하지 않는 이미지 타입입니다.",
-                        image.src
+                        image.src,
                     );
                     return;
                 }
@@ -155,17 +151,17 @@ export const MapMarker = React.memo<MapMarkerProps>(
                 if (image.options?.offset) {
                     const offset = new window.kakao.maps.Point(
                         image.options.offset.x,
-                        image.options.offset.y
+                        image.options.offset.y,
                     );
                     markerImage = new window.kakao.maps.MarkerImage(
                         imageSrc,
                         imageSize,
-                        { offset }
+                        { offset },
                     );
                 } else {
                     markerImage = new window.kakao.maps.MarkerImage(
                         imageSrc,
-                        imageSize
+                        imageSize,
                     );
                 }
 
@@ -205,7 +201,7 @@ export const MapMarker = React.memo<MapMarkerProps>(
                 window.kakao.maps.event.addListener(
                     markerInstance,
                     "mouseover",
-                    () => onMouseOver(markerInstance)
+                    () => onMouseOver(markerInstance),
                 );
             }
 
@@ -213,7 +209,7 @@ export const MapMarker = React.memo<MapMarkerProps>(
                 window.kakao.maps.event.addListener(
                     markerInstance,
                     "mouseout",
-                    () => onMouseOut(markerInstance)
+                    () => onMouseOut(markerInstance),
                 );
             }
 
@@ -221,7 +217,7 @@ export const MapMarker = React.memo<MapMarkerProps>(
                 window.kakao.maps.event.addListener(
                     markerInstance,
                     "dragstart",
-                    () => onDragStart(markerInstance)
+                    () => onDragStart(markerInstance),
                 );
             }
 
@@ -229,7 +225,7 @@ export const MapMarker = React.memo<MapMarkerProps>(
                 window.kakao.maps.event.addListener(
                     markerInstance,
                     "dragend",
-                    () => onDragEnd(markerInstance)
+                    () => onDragEnd(markerInstance),
                 );
             }
 
@@ -294,5 +290,5 @@ export const MapMarker = React.memo<MapMarkerProps>(
                 {children}
             </MarkerContext.Provider>
         );
-    }
+    },
 );

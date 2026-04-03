@@ -23,7 +23,7 @@
  */
 
 import { ReactElement } from "react";
-import { KakaoSearchResult, KakaoPosition, KakaoMarker } from "./types";
+import { KakaoSearchResult, KakaoPosition } from "./types";
 
 /**
  * React 엘리먼트를 HTML 문자열로 변환 (간단한 구조만 지원)
@@ -66,7 +66,9 @@ function reactElementToString(element: ReactElement): string {
     const attrString = Object.keys(attrs)
         .filter(
             (key) =>
-                attrs[key] !== undefined && attrs[key] !== null && key !== "key"
+                attrs[key] !== undefined &&
+                attrs[key] !== null &&
+                key !== "key",
         )
         .map((key) => {
             const value = attrs[key];
@@ -139,24 +141,7 @@ function reactElementToString(element: ReactElement): string {
 export const reactSvgToDataUrl = (svgElement: ReactElement): string => {
     const svgString = reactElementToString(svgElement);
     return `data:image/svg+xml;base64,${btoa(
-        unescape(encodeURIComponent(svgString))
-    )}`;
-};
-
-/**
- * SVG 문자열을 Data URL로 변환
- * @param svgString SVG 문자열
- * @returns Data URL 문자열
- *
- * @example
- * ```tsx
- * const svgString = '<svg width="36" height="36"><circle cx="18" cy="18" r="10" fill="red" /></svg>';
- * const dataUrl = svgStringToDataUrl(svgString);
- * ```
- */
-export const svgStringToDataUrl = (svgString: string): string => {
-    return `data:image/svg+xml;base64,${btoa(
-        unescape(encodeURIComponent(svgString))
+        unescape(encodeURIComponent(svgString)),
     )}`;
 };
 
@@ -165,7 +150,7 @@ export const parsePosition = (position: KakaoPosition) => {
     // Kakao Maps API가 로드되었는지 확인
     if (!window.kakao || !window.kakao.maps) {
         console.debug(
-            "카카오맵 API가 로드되지 않았습니다. 잠시 후 다시 시도하세요."
+            "카카오맵 API가 로드되지 않았습니다. 잠시 후 다시 시도하세요.",
         );
         return;
     }
@@ -177,74 +162,6 @@ export const parsePosition = (position: KakaoPosition) => {
 };
 
 /**
- * 카카오 마커 생성 유틸 함수
- * @param position 마커 위치 (lat, lng 또는 x, y)
- * @param options 마커 옵션 (title, clickable, draggable 등)
- * @returns KakaoMarker 인스턴스 또는 null
- */
-export const createKakaoMarker = (
-    position: KakaoPosition,
-    options?: {
-        title?: string;
-        clickable?: boolean;
-        draggable?: boolean;
-        zIndex?: number;
-        opacity?: number;
-        image?: {
-            src: string;
-            size: { width: number; height: number };
-            options?: {
-                offset?: { x: number; y: number };
-            };
-        };
-    }
-): KakaoMarker | null => {
-    // Kakao Maps API가 로드되었는지 확인
-    if (!window.kakao || !window.kakao.maps) {
-        console.error("createKakaoMarker: 카카오맵 API가 로드되지 않았습니다.");
-        return null;
-    }
-
-    const markerPosition = parsePosition(position);
-    if (!markerPosition) {
-        console.error("createKakaoMarker: 마커 위치 변환 실패", position);
-        return null;
-    }
-
-    const markerOptions: any = {
-        position: markerPosition,
-        ...options,
-    };
-
-    // 이미지 옵션 처리
-    if (options?.image) {
-        const imageSize = new window.kakao.maps.Size(
-            options.image.size.width,
-            options.image.size.height
-        );
-
-        if (options.image.options?.offset) {
-            const offset = new window.kakao.maps.Point(
-                options.image.options.offset.x,
-                options.image.options.offset.y
-            );
-            markerOptions.image = new window.kakao.maps.MarkerImage(
-                options.image.src,
-                imageSize,
-                { offset }
-            );
-        } else {
-            markerOptions.image = new window.kakao.maps.MarkerImage(
-                options.image.src,
-                imageSize
-            );
-        }
-    }
-
-    return new window.kakao.maps.Marker(markerOptions);
-};
-
-/**
  * 주소 또는 태그 검색 함수
  * @param address 검색할 주소 또는 태그
  * @param onSuccess 검색 성공 시 호출될 콜백 함수
@@ -253,13 +170,13 @@ export const createKakaoMarker = (
 export const searchAddress = (
     address: string,
     onSuccess: (result: KakaoSearchResult) => void,
-    onError?: (error: string) => void
+    onError?: (error: string) => void,
 ) => {
     // Kakao Maps API가 로드되었는지 확인
     if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
         if (onError)
             onError(
-                "카카오맵 API가 로드되지 않았습니다. 잠시 후 다시 시도하세요."
+                "카카오맵 API가 로드되지 않았습니다. 잠시 후 다시 시도하세요.",
             );
         return;
     }
@@ -281,7 +198,7 @@ export const searchAddress = (
             // 2. 정확한 주소 검색 실패시 유사 주소 검색 시도
             console.debug(
                 "정확한 주소 검색 실패, 유사 주소 검색 시도...",
-                address
+                address,
             );
             tryAlternativeSearch(address);
         }
@@ -300,7 +217,7 @@ export const searchAddress = (
                 const originalNumber = parseInt(numberMatch[0]);
                 const baseAddress = originalAddress.replace(
                     /\d+(?=\D*$)/,
-                    "{NUMBER}"
+                    "{NUMBER}",
                 );
                 let searchIndex = 0;
                 const searchRange = [-2, -1, 1, 2]; // 전후 2자리씩
@@ -318,7 +235,7 @@ export const searchAddress = (
                         // 음수 번지수는 제외
                         const testAddress = baseAddress.replace(
                             "{NUMBER}",
-                            targetNumber.toString()
+                            targetNumber.toString(),
                         );
 
                         geocoder.addressSearch(
@@ -334,14 +251,14 @@ export const searchAddress = (
                                     foundResult = true;
                                     handleSearchResult(
                                         result[0],
-                                        originalAddress + ` (${testAddress})`
+                                        originalAddress + ` (${testAddress})`,
                                     );
                                 } else {
                                     // 다음 번지수 검색
                                     searchIndex++;
                                     searchNearbyNumber();
                                 }
-                            }
+                            },
                         );
                     } else {
                         searchIndex++;
@@ -385,13 +302,13 @@ export const searchAddress = (
                             foundResult = true;
                             handleSearchResult(
                                 result[0],
-                                originalAddress + " (유사지역)"
+                                originalAddress + " (유사지역)",
                             );
                         } else {
                             // 다음 단계 검색 시도
                             searchPartial(index - 1);
                         }
-                    }
+                    },
                 );
             };
 
@@ -414,16 +331,16 @@ export const searchAddress = (
                         // 키워드 검색 성공
                         handleSearchResult(
                             placeResults[0],
-                            placeResults[0].place_name
+                            placeResults[0].place_name,
                         );
                     } else {
                         // 모든 검색 실패
                         if (onError)
                             onError(
-                                "검색 결과가 없습니다. 다른 주소나 장소명으로 시도해보세요."
+                                "검색 결과가 없습니다. 다른 주소나 장소명으로 시도해보세요.",
                             );
                     }
-                }
+                },
             );
         };
 
